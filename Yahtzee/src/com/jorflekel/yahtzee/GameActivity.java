@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -13,11 +18,13 @@ import android.widget.TextView;
 import com.jorflekel.yahtzee.Hands.Hand;
 import com.jorflekel.yahtzee.views.HelpDialog;
 
-public class GameActivity extends Activity {
+public class GameActivity extends Activity implements SensorEventListener {
 	
 	private List<TextView> scoreBoxes;
 	private TextView aces, twos, threes, fours, fives, sixes, bonus, threeOf, fourOf, fullHouse, smallSt, largeSt, yahtzee, chance;
+	private TextView handLabel;
 	private int[] hand;
+	private boolean rolledWithoutMove = false;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +79,12 @@ public class GameActivity extends Activity {
         scoreBoxes.add(yahtzee);
         scoreBoxes.add(chance);
         
-        roll();
+        handLabel = (TextView) findViewById(R.id.handLabel);
+        
+        startTurn();
+        
+        SensorManager sensors = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensors.registerListener(this, sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 100);
     }
 
     @Override
@@ -82,13 +94,21 @@ public class GameActivity extends Activity {
     }
     
     private void roll() {
-    	hand = new int[6];
-    	for(int i = 0; i < 6; i++) {
+    	hand = new int[5];
+    	String string = "";
+    	for(int i = 0; i < 5; i++) {
     		hand[i] = (int) (Math.random() * 6 + 1);
+    		string += hand[i] + " ";
     	}
+    	handLabel.setText(string);
     }
     
     public void onShakeClick(View v) {
+    	if(!rolledWithoutMove) startTurn();
+    }
+    
+    public void startTurn() {
+    	rolledWithoutMove = true;
     	roll();
     	for(TextView tv : scoreBoxes) {
     		if(tv.getTag(R.id.scoreId) == null)
@@ -100,6 +120,7 @@ public class GameActivity extends Activity {
     	if(v.getTag(R.id.scoreId) == null) {
     		v.setTag(R.id.scoreId, ((Hand)v.getTag(R.id.handId)).score(hand));
     		((TextView) v).setTextColor(Color.BLACK);
+    		rolledWithoutMove = false;
     	}
     }
     
@@ -149,5 +170,22 @@ public class GameActivity extends Activity {
     		break;
     	}
     }
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private float yA = 0;
+	
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		float nYA = event.values[1];
+		if(Math.signum(nYA) == -Math.signum(yA) && !rolledWithoutMove) {
+			startTurn();
+		}
+		yA = nYA;
+	}
     
 }

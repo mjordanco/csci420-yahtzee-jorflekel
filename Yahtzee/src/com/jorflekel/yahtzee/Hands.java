@@ -222,8 +222,8 @@ public class Hands {
 		@Override
 		public int score(int[] hand) {
 			Arrays.sort(hand);
-			if ((hand[0] == hand[1] && hand[1] == hand[2] && hand[2] == hand[3])
-					|| (hand[1] == hand[2] && hand[2] == hand[3] && hand[3] == hand[4]))
+			if ((hand[0] == hand[1] - 1 && hand[1] == hand[2] - 1  && hand[2] == hand[3] - 1)
+					|| (hand[1] == hand[2] - 1 && hand[2] == hand[3] - 1 && hand[3] == hand[4] - 1))
 				return 30;
 			return 0;
 		}
@@ -240,8 +240,8 @@ public class Hands {
 		@Override
 		public int score(int[] hand) {
 			Arrays.sort(hand);
-			if (hand[0] == hand[1] && hand[1] == hand[2] && hand[2] == hand[3]
-					&& hand[3] == hand[4])
+			if (hand[0] == hand[1] - 1 && hand[1] == hand[2] - 1 && hand[2] == hand[3] - 1
+					&& hand[3] == hand[4] - 1)
 				return 40;
 			return 0;
 		}

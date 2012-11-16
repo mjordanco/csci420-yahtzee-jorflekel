@@ -30,6 +30,15 @@
                 android:onClick="onShakeClick"
                 android:src="@drawable/ic_action_search" />
 
+            <TextView
+                android:id="@+id/handLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:textColor="#FFFFFF"
+                android:textSize="20dp" />
+
         </RelativeLayout>
 
         <LinearLayout
