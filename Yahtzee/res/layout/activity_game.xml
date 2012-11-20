@@ -56,7 +56,18 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="5dp"
                 android:text="3"
-                android:textSize="@dimen/rolls_label_size" />
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/rolls_label_size"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/newGame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:onClick="onNewGameClick"
+                android:text="New Game" />
 
         </RelativeLayout>
 
@@ -80,6 +91,25 @@
                     android:paddingLeft="5dp" >
 
                     <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".5"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:onClick="onLabelClick"
+                        android:text="UPPER SECTION"
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/text_label_background"
+                    android:paddingLeft="5dp" >
+
+                    <TextView
                         android:id="@+id/acesLabel"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -88,7 +118,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Aces"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -104,8 +135,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -124,7 +155,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Twos"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -140,8 +172,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -160,7 +192,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Threes"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -176,8 +209,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -196,7 +229,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Fours"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -212,8 +246,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -232,7 +266,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Fives"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -248,8 +283,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -268,7 +303,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Sixes"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -284,8 +320,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -304,7 +340,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Bonus"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -320,9 +357,10 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -330,6 +368,25 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/text_label_background"
+                    android:paddingLeft="5dp" >
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".5"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:onClick="onLabelClick"
+                        android:text="LOWER SECTION"
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -347,7 +404,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="3 of a kind"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -363,8 +421,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -383,7 +441,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="4 of a kind"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -399,8 +458,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -419,7 +478,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Full House"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -435,8 +495,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -455,7 +515,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Small St."
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -471,8 +532,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -491,7 +552,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Large St."
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -507,8 +569,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -527,7 +589,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Yahtzee"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -543,8 +606,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -563,7 +626,8 @@
                         android:gravity="center_horizontal|center_vertical|left"
                         android:onClick="onLabelClick"
                         android:text="Chance"
-                        android:textSize="@dimen/text_size" />
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
@@ -579,8 +643,8 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:onClick="onScoreClick"
                         android:textColor="@color/default_score_color"
-                        android:textSize="@dimen/text_size" />
-
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

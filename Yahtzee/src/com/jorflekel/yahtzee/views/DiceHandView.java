@@ -48,28 +48,17 @@ public class DiceHandView extends FrameLayout {
 			dice[i].setTextOff("" + hand[i]);
 		}
 	}
-	
-	public boolean[] getHeldDice() {
-		boolean[] held = new boolean[5];
-		for(int i = 0; i < 5; i++) {
-			held[i] = dice[i].isChecked();
-		}
-		return held;
-	}
-	
-	public int[] getHand() {
-		return hand != null ? hand : new int[5];
-	}
 
 	public int[] roll() {
 		for(int i = 0; i < 5; i++) {
 			dice[i].setEnabled(true);
+			Log.d("FVNEIZA", " ");
+			Log.d("FVNEIZA", "Old die value: " +hand[i]);
 			if(!dice[i].isChecked()) {
 				hand[i] = (int) (Math.random() * 6 + 1);
 			} else {
-				Log.d("FJVRCE", "" + i + " is checked");
 			}
-			Log.d("FVNEIZA", "Die value: " +hand[i]);
+			Log.d("FVNEIZA", "New die value: " +hand[i]);
     	}
     	setHand();
 		return hand;

@@ -7,6 +7,7 @@ public class Hands {
 	public interface Hand {
 		public int score(int[] hand);
 		public String getName();
+		public int getDescriptionId();
 	}
 
 	public static final Hand ACES = new Hand() {
@@ -27,6 +28,11 @@ public class Hands {
 		@Override
 		public String getName() {
 			return "Aces";
+		}
+
+		@Override
+		public int getDescriptionId() {
+			return R.string.aces_desc;
 		}
 
 	};
@@ -51,6 +57,11 @@ public class Hands {
 			return "Twos";
 		}
 
+		@Override
+		public int getDescriptionId() {
+			return R.string.twos_desc;
+		}
+
 	};
 
 	public static final Hand THREES = new Hand() {
@@ -71,6 +82,11 @@ public class Hands {
 		@Override
 		public String getName() {
 			return "Threes";
+		}
+
+		@Override
+		public int getDescriptionId() {
+			return R.string.threes_desc;
 		}
 
 	};
@@ -95,6 +111,11 @@ public class Hands {
 			return "Fours";
 		}
 
+		@Override
+		public int getDescriptionId() {
+			return R.string.fours_desc;
+		}
+
 	};
 
 	public static final Hand FIVES = new Hand() {
@@ -117,6 +138,11 @@ public class Hands {
 			return "Fives";
 		}
 
+		@Override
+		public int getDescriptionId() {
+			return R.string.fives_desc;
+		}
+
 	};
 
 	public static final Hand SIXES = new Hand() {
@@ -137,6 +163,11 @@ public class Hands {
 		@Override
 		public String getName() {
 			return "Sixes";
+		}
+
+		@Override
+		public int getDescriptionId() {
+			return R.string.sixes_desc;
 		}
 
 	};
@@ -168,6 +199,11 @@ public class Hands {
 			return "Three of a Kind";
 		}
 
+		@Override
+		public int getDescriptionId() {
+			return R.string.triple_desc;
+		}
+
 	};
 
 	public static final Hand FOUR_OF_A_KIND = new Hand() {
@@ -197,15 +233,21 @@ public class Hands {
 			return "Four of a Kind";
 		}
 
+		@Override
+		public int getDescriptionId() {
+			return R.string.quad_desc;
+		}
+
 	};
 
 	public static final Hand FULL_HOUSE = new Hand() {
 
 		@Override
 		public int score(int[] hand) {
-			Arrays.sort(hand);
-			if ((hand[0] == hand[1] && hand[2] == hand[3] && hand[3] == hand[4])
-					|| (hand[0] == hand[1] && hand[1] == hand[2] && hand[3] == hand[4]))
+			int[] copy = hand.clone();
+			Arrays.sort(copy);
+			if ((copy[0] == copy[1] && copy[2] == copy[3] && copy[3] == copy[4])
+					|| (copy[0] == copy[1] && copy[1] == copy[2] && copy[3] == copy[4]))
 				return 25;
 			return 0;
 		}
@@ -215,15 +257,21 @@ public class Hands {
 			return "Full House";
 		}
 
+		@Override
+		public int getDescriptionId() {
+			return R.string.house_desc;
+		}
+
 	};
 
 	public static final Hand SMALL_STRAIGHT = new Hand() {
 
 		@Override
 		public int score(int[] hand) {
-			Arrays.sort(hand);
-			if ((hand[0] == hand[1] - 1 && hand[1] == hand[2] - 1  && hand[2] == hand[3] - 1)
-					|| (hand[1] == hand[2] - 1 && hand[2] == hand[3] - 1 && hand[3] == hand[4] - 1))
+			int[] copy = hand.clone();
+			Arrays.sort(copy);
+			if ((copy[0] == copy[1] - 1 && copy[1] == copy[2] - 1  && copy[2] == copy[3] - 1)
+					|| (copy[1] == copy[2] - 1 && copy[2] == copy[3] - 1 && copy[3] == copy[4] - 1))
 				return 30;
 			return 0;
 		}
@@ -233,15 +281,21 @@ public class Hands {
 			return "Small Straight";
 		}
 
+		@Override
+		public int getDescriptionId() {
+			return R.string.sm_st_desc;
+		}
+
 	};
 
 	public static final Hand LARGE_STRAIGHT = new Hand() {
 
 		@Override
 		public int score(int[] hand) {
-			Arrays.sort(hand);
-			if (hand[0] == hand[1] - 1 && hand[1] == hand[2] - 1 && hand[2] == hand[3] - 1
-					&& hand[3] == hand[4] - 1)
+			int[] copy = hand.clone();
+			Arrays.sort(copy);
+			if (copy[0] == copy[1] - 1 && copy[1] == copy[2] - 1 && copy[2] == copy[3] - 1
+					&& copy[3] == copy[4] - 1)
 				return 40;
 			return 0;
 		}
@@ -249,6 +303,11 @@ public class Hands {
 		@Override
 		public String getName() {
 			return "Large Straight";
+		}
+
+		@Override
+		public int getDescriptionId() {
+			return R.string.lg_st_desc;
 		}
 
 	};
@@ -279,6 +338,11 @@ public class Hands {
 			return "Yahtzee";
 		}
 
+		@Override
+		public int getDescriptionId() {
+			return R.string.yahtzee_desc;
+		}
+
 	};
 
 	public static final Hand CHANCE = new Hand() {
@@ -297,6 +361,11 @@ public class Hands {
 			return "Chance";
 		}
 
+		@Override
+		public int getDescriptionId() {
+			return R.string.chance_desc;
+		}
+
 	};
 	
 	public static final Hand BONUS = new Hand() {
@@ -309,6 +378,11 @@ public class Hands {
 		@Override
 		public String getName() {
 			return "Bonus";
+		}
+
+		@Override
+		public int getDescriptionId() {
+			return R.string.bonus_desc;
 		}
 		
 	};

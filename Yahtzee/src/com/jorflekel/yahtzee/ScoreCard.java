@@ -12,8 +12,12 @@ public class ScoreCard {
 	private HashMap<String, Integer> scores;
 	private HashMap<String, Integer> optimal;
 	private static final String[] SECTIONS = { "aces", "twos", "threes",
-			"fours", "fives", "sixes", "bonus", "three of a kind", "four of a kind", "full house",
-			"small straight", "large straight", "yahtzee", "chance" };
+			"fours", "fives", "sixes", "bonus", "three of a kind",
+			"four of a kind", "full house", "small straight", "large straight",
+			"yahtzee", "chance" };
+
+	private static final String[] UPPER_SECTION = { "aces", "twos", "threes",
+			"fours", "fives", "sixes" };
 
 	private static final int[] OPTIMAL_SCORES = { 5, 10, 15, 20, 25, 30, 35,
 			30, 30, 25, 30, 40, 50, 30 };
@@ -21,8 +25,8 @@ public class ScoreCard {
 	public ScoreCard() {
 		scores = new HashMap<String, Integer>();
 		optimal = new HashMap<String, Integer>();
-		
-		for(int i = 0; i < SECTIONS.length; i++) {
+
+		for (int i = 0; i < SECTIONS.length; i++) {
 			optimal.put(SECTIONS[i], OPTIMAL_SCORES[i]);
 			scores.put(SECTIONS[i], -1);
 		}
@@ -74,6 +78,14 @@ public class ScoreCard {
 		}
 
 		return (best - deficit);
+	}
+
+	public int getUpperScore() {
+		int sum = 0;
+		for(String s : UPPER_SECTION) {
+			sum += getScore(s) != -1 ? getScore(s) : 0;
+		}
+		return sum;
 	}
 
 }

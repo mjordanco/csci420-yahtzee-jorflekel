@@ -14,4 +14,12 @@
         android:textColor="#FFFFFF"
         android:textSize="20dp" />
 
+    <TextView
+        android:id="@+id/helpDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/helpTitle"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp" />
+
 </RelativeLayout>

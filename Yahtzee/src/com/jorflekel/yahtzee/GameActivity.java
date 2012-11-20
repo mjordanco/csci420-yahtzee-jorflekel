@@ -5,11 +5,13 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -23,6 +25,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 	
 	private List<TextView> scoreBoxes;
 	private TextView aces, twos, threes, fours, fives, sixes, bonus, threeOf, fourOf, fullHouse, smallSt, largeSt, yahtzee, chance;
+	private TextView rollsLabel;
 	private DiceHandView diceHandView;
 	private int[] hand;
 	private int rollsSinceMove = 0;
@@ -92,6 +95,8 @@ public class GameActivity extends Activity implements SensorEventListener {
         
         diceHandView.hideNumbers();
         
+        rollsLabel = (TextView) findViewById(R.id.rollsLabel);
+        
         SensorManager sensors = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensors.registerListener(this, sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 100);
     }
@@ -108,12 +113,18 @@ public class GameActivity extends Activity implements SensorEventListener {
     }
     
     public void onShakeClick(View v) {
-    	if(rollsSinceMove < 3) startTurn();
+    	if(rollsSinceMove < 3) {
+    		startTurn();
+    		shakeTime = System.currentTimeMillis();
+    	}
     }
     
     public void startTurn() {
     	rollsSinceMove++;
     	roll();
+    	rollsLabel.setText("" + (3-rollsSinceMove));
+    	MediaPlayer player = MediaPlayer.create(this, R.raw.roll);
+    	player.start();
     	for(TextView tv : scoreBoxes) {
     		if(tv.getTag(R.id.scoreId) == null)
     			tv.setText("" + ((Hand)tv.getTag(R.id.handId)).score(hand));
@@ -128,13 +139,23 @@ public class GameActivity extends Activity implements SensorEventListener {
     }
     
     public void onScoreClick(View v) {
-    	if(v.getTag(R.id.scoreId) == null && !moved) {
+    	if(v.getId() == R.id.upperBonusScore) return;
+    	if(v.getTag(R.id.scoreId) == null && !moved && rollsSinceMove > 0) {
     		v.setTag(R.id.scoreId, ((Hand)v.getTag(R.id.handId)).score(hand));
-    		((TextView) v).setTextColor(Color.BLACK);
+    		((TextView) v).setTextColor(Color.parseColor("#254117"));
     		rollsSinceMove = 0;
     		moved = true;
     		diceHandView.hideNumbers();
     		diceHandView.toggleOff();
+    		rollsLabel.setText("3");
+    		scoreCard.setScore(((Hand)v.getTag(R.id.handId)).getName(), ((Hand)v.getTag(R.id.handId)).score(hand));
+//    		if(scoreCard.getUpperScore() >= 63) {
+//    			((TextView) findViewById(R.id.upperBonusScore)).setText("35");
+//    			((TextView) findViewById(R.id.upperBonusScore)).setTextColor(Color.parseColor("#254117"));
+//    			scoreCard.setScore("bonus", 35);
+//    		} else {
+//    			((TextView) findViewById(R.id.upperBonusScore)).setText("" + (63 - scoreCard.getUpperScore()) + " more");
+//    		}
     		clearEmptyScores();
     	}
     }
@@ -185,6 +206,12 @@ public class GameActivity extends Activity implements SensorEventListener {
     		break;
     	}
     }
+    
+    public void onNewGameClick(View v) {
+    	Intent intent = new Intent(this, GameActivity.class);
+    	startActivity(intent);
+    	finish();
+    }
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -198,7 +225,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		float nYA = event.values[1];
-		if(Math.signum(nYA) == -Math.signum(yA) && rollsSinceMove < 3 & System.currentTimeMillis() - shakeTime > 3000) {
+		if(Math.abs(nYA) > .5 && Math.abs(yA) > .5 && Math.signum(nYA) == -Math.signum(yA) && rollsSinceMove < 3 & System.currentTimeMillis() - shakeTime > 3000) {
 			startTurn();
 			shakeTime = System.currentTimeMillis();
 		}
