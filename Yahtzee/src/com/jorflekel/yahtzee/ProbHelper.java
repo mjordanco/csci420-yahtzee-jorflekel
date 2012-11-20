@@ -62,7 +62,7 @@ public class ProbHelper {
 		
 	}
 	
-	public double probOfDouble( int[] hand, int numDiceToRoll, int numTimesToRoll) {
+	public double probOfDoubleJackStyle( int[] hand, int numDiceToRoll, int numTimesToRoll) {
 		
 		int numUnique = 0;
 		if(hand != null) {
