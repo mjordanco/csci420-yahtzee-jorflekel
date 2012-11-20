@@ -25,6 +25,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 	private TextView handLabel;
 	private int[] hand;
 	private boolean rolledWithoutMove = false;
+	private ProbHelper probHelper;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +81,8 @@ public class GameActivity extends Activity implements SensorEventListener {
         scoreBoxes.add(chance);
         
         handLabel = (TextView) findViewById(R.id.handLabel);
+        
+        probHelper = ProbHelper.instance();
         
         startTurn();
         
