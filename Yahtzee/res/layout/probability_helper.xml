@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <com.jorflekel.yahtzee.views.DiceHandView
+        android:id="@+id/diceHandView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" >
+
+    </com.jorflekel.yahtzee.views.DiceHandView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/acesLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Aces"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/acesScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/twosLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Twos"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/twosScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/threesLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Threes"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/threesScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/foursLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Fours"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/foursScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/fivesLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Fives"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/fivesScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/sixesLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Sixes"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/sixesScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/upperBonusLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Bonus"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/upperBonusScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/threeOfAKindLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="3 of a kind"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/threeOfAKindScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/fourOfAKindLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="4 of a kind"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/fourOfAKindScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/fullHouseLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Full House"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/fullHouseScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/smallStraightLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Small St."
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/smallStraightScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/largeStraightLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Large St."
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/largeStraightScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/yahtzeeLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Yahtzee"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/yahtzeeScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/text_label_background"
+                android:paddingLeft="5dp" >
+
+                <TextView
+                    android:id="@+id/chanceLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical|left"
+                    android:onClick="onLabelClick"
+                    android:text="Chance"
+                    android:textSize="@dimen/text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+
+                <TextView
+                    android:id="@+id/chanceScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:onClick="onScoreClick"
+                    android:textColor="@color/default_score_color"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
