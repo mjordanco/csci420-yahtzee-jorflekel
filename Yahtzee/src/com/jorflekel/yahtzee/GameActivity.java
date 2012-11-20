@@ -31,6 +31,7 @@ public class GameActivity extends Activity implements SensorEventListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        //
         
         aces = (TextView) findViewById(R.id.acesScore);
         aces.setTag(R.id.handId, Hands.ACES);

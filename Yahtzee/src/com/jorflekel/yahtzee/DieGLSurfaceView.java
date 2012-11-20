@@ -1,4 +1,4 @@
-package com.example.diceviewtesting;
+package com.jorflekel.yahtzee;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
