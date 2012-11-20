@@ -19,7 +19,6 @@ public class HelpDialog extends Dialog {
 		
 		title = (TextView) findViewById(R.id.helpTitle);
 		
-		
 		title.setText(hand.getName());
 	}
 

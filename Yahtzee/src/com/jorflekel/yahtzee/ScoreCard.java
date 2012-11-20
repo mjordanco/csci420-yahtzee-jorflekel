@@ -11,86 +11,68 @@ public class ScoreCard {
 	 */
 	private HashMap<String, Integer> scores;
 	private HashMap<String, Integer> optimal;
-	private static String[] sections = {"aces", "twos", "threes", "fours", "fives", "sixes", "bonus",
-		"triple", "quad", "house", "small", "large", "yahtzee", "chance"};
-	
+	private static final String[] SECTIONS = { "aces", "twos", "threes",
+			"fours", "fives", "sixes", "bonus", "three of a kind", "four of a kind", "full house",
+			"small straight", "large straight", "yahtzee", "chance" };
+
+	private static final int[] OPTIMAL_SCORES = { 5, 10, 15, 20, 25, 30, 35,
+			30, 30, 25, 30, 40, 50, 30 };
+
 	public ScoreCard() {
 		scores = new HashMap<String, Integer>();
-		optimal =  new HashMap<String, Integer>();
-		optimal.put("aces", 	5);
-		optimal.put("twos", 	10);
-		optimal.put("threes", 	15);
-		optimal.put("fours", 	20);
-		optimal.put("fives", 	25);
-		optimal.put("sixes", 	30);
-		optimal.put("bonus", 	35);
-		optimal.put("triple", 	30);
-		optimal.put("quad", 	30);
-		optimal.put("house", 	25);
-		optimal.put("small", 	30);
-		optimal.put("large", 	40);
-		optimal.put("yahtzee", 	50);
-		optimal.put("chance", 	30);
+		optimal = new HashMap<String, Integer>();
 		
-		scores.put("aces", 		-1);
-		scores.put("twos", 		-1);
-		scores.put("threes", 	-1);
-		scores.put("fours", 	-1);
-		scores.put("fives", 	-1);
-		scores.put("sixes", 	-1);
-		scores.put("bonus", 	-1);
-		scores.put("triple", 	-1);
-		scores.put("quad", 		-1);
-		scores.put("house", 	-1);
-		scores.put("small", 	-1);
-		scores.put("large", 	-1);
-		scores.put("yahtzee", 	-1);
-		scores.put("chance", 	-1);
+		for(int i = 0; i < SECTIONS.length; i++) {
+			optimal.put(SECTIONS[i], OPTIMAL_SCORES[i]);
+			scores.put(SECTIONS[i], -1);
+		}
 	}
-	
+
 	public void setScore(String section, int val) {
 		boolean valid = false;
-		for(String s : sections) {
-			valid = valid || section.equals(s);
+		for (String s : SECTIONS) {
+			valid = valid || section.equalsIgnoreCase(s);
 		}
-		if(valid && val >= 0) {
+		if (valid && val >= 0) {
 			scores.remove(section);
 			scores.put(section, val);
 		} else {
-			Log.e("SCORECARD", "Invalid section or score: " + section + ", " + val);
+			Log.e("SCORECARD", "Invalid section or score: " + section + ", "
+					+ val);
 		}
 	}
+
 	public int getScore(String section) {
 		boolean valid = false;
-		for(String s : sections) {
-			valid = valid || section.equals(s);
+		for (String s : SECTIONS) {
+			valid = valid || section.equalsIgnoreCase(s);
 		}
-		if(valid) {
+		if (valid) {
 			return scores.get(section);
 		} else {
 			Log.e("SCORECARD", "Invalid section!");
 			return -1;
 		}
 	}
-	
+
 	public int calcDeficit() {
 		int deficit = 0;
-		for(String s : sections) {
-			if(scores.get(s) != -1) {
+		for (String s : SECTIONS) {
+			if (scores.get(s) != -1) {
 				deficit += (optimal.get(s) - scores.get(s));
 			}
 		}
-		
+
 		return deficit;
 	}
-	
+
 	public int calcBestPossible() {
 		int deficit = calcDeficit();
 		int best = 0;
-		for(String s : sections) {
+		for (String s : SECTIONS) {
 			best += optimal.get(s);
 		}
-		
+
 		return (best - deficit);
 	}
 

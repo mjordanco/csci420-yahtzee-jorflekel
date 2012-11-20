@@ -14,21 +14,22 @@
             android:layout_height="0dp"
             android:layout_weight="1" >
 
-            <com.jorflekel.yahtzee.views.DiceView
-                android:id="@+id/diceView"
+            <com.jorflekel.yahtzee.views.DieGLSurfaceView
+                android:id="@+id/DieGLSurfaceView1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight=".5" />
 
             <ImageView
                 android:id="@+id/shakeImage"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/shake_graphic_size"
+                android:layout_height="@dimen/shake_graphic_size"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_weight=".5"
+                android:background="@drawable/shake_button_background"
                 android:onClick="onShakeClick"
-                android:src="@drawable/ic_action_search" />
+                android:src="@drawable/shake_graphic" />
 
             <TextView
                 android:id="@+id/handLabel"
@@ -38,6 +39,24 @@
                 android:layout_centerHorizontal="true"
                 android:textColor="#FFFFFF"
                 android:textSize="20dp" />
+
+            <com.jorflekel.yahtzee.views.DiceHandView
+                android:id="@+id/diceHandView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true" >
+            </com.jorflekel.yahtzee.views.DiceHandView>
+
+            <TextView
+                android:id="@+id/rollsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="5dp"
+                android:text="3"
+                android:textSize="@dimen/rolls_label_size" />
 
         </RelativeLayout>
 

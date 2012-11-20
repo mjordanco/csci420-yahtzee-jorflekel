@@ -16,16 +16,19 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.jorflekel.yahtzee.Hands.Hand;
+import com.jorflekel.yahtzee.views.DiceHandView;
 import com.jorflekel.yahtzee.views.HelpDialog;
 
 public class GameActivity extends Activity implements SensorEventListener {
 	
 	private List<TextView> scoreBoxes;
 	private TextView aces, twos, threes, fours, fives, sixes, bonus, threeOf, fourOf, fullHouse, smallSt, largeSt, yahtzee, chance;
-	private TextView handLabel;
+	private DiceHandView diceHandView;
 	private int[] hand;
-	private boolean rolledWithoutMove = false;
+	private int rollsSinceMove = 0;
 	private ProbHelper probHelper;
+	private ScoreCard scoreCard;
+	private boolean moved;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,11 +83,13 @@ public class GameActivity extends Activity implements SensorEventListener {
         scoreBoxes.add(yahtzee);
         scoreBoxes.add(chance);
         
-        handLabel = (TextView) findViewById(R.id.handLabel);
+        scoreCard = new ScoreCard();
+        
+        diceHandView = (DiceHandView) findViewById(R.id.diceHandView);
         
         probHelper = ProbHelper.instance();
         
-        startTurn();
+        diceHandView.hideNumbers();
         
         SensorManager sensors = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensors.registerListener(this, sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 100);
@@ -97,21 +102,16 @@ public class GameActivity extends Activity implements SensorEventListener {
     }
     
     private void roll() {
-    	hand = new int[5];
-    	String string = "";
-    	for(int i = 0; i < 5; i++) {
-    		hand[i] = (int) (Math.random() * 6 + 1);
-    		string += hand[i] + " ";
-    	}
-    	handLabel.setText(string);
+    	moved = false;
+    	hand = diceHandView.roll();
     }
     
     public void onShakeClick(View v) {
-    	if(!rolledWithoutMove) startTurn();
+    	if(rollsSinceMove < 3) startTurn();
     }
     
     public void startTurn() {
-    	rolledWithoutMove = true;
+    	rollsSinceMove++;
     	roll();
     	for(TextView tv : scoreBoxes) {
     		if(tv.getTag(R.id.scoreId) == null)
@@ -119,11 +119,22 @@ public class GameActivity extends Activity implements SensorEventListener {
     	}
     }
     
+    public void clearEmptyScores() {
+    	for(TextView tv : scoreBoxes) {
+    		if(tv.getTag(R.id.scoreId) == null)
+    			tv.setText("");
+    	}
+    }
+    
     public void onScoreClick(View v) {
-    	if(v.getTag(R.id.scoreId) == null) {
+    	if(v.getTag(R.id.scoreId) == null && !moved) {
     		v.setTag(R.id.scoreId, ((Hand)v.getTag(R.id.handId)).score(hand));
     		((TextView) v).setTextColor(Color.BLACK);
-    		rolledWithoutMove = false;
+    		rollsSinceMove = 0;
+    		moved = true;
+    		diceHandView.hideNumbers();
+    		diceHandView.toggleOff();
+    		clearEmptyScores();
     	}
     }
     
@@ -181,12 +192,14 @@ public class GameActivity extends Activity implements SensorEventListener {
 	}
 
 	private float yA = 0;
+	private long shakeTime = 0;
 	
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		float nYA = event.values[1];
-		if(Math.signum(nYA) == -Math.signum(yA) && !rolledWithoutMove) {
+		if(Math.signum(nYA) == -Math.signum(yA) && rollsSinceMove < 3 & System.currentTimeMillis() - shakeTime > 3000) {
 			startTurn();
+			shakeTime = System.currentTimeMillis();
 		}
 		yA = nYA;
 	}
