@@ -10,7 +10,7 @@
     <string name="fours_desc">You get four points for each four in your hand.</string>
     <string name="fives_desc">You get five points for each five in your hand.</string>
     <string name="sixes_desc">You get six points for each six in your hand.</string>
-    <string name="bonus_desc">If you score 63 or more points in this section you get 35 bonus points. One way to do this is to get at least three of a kind in each section</string>
+    <string name="bonus_desc">If you score 63 or more total points in the high section, you get 35 bonus points. One way to do this is to get at least three of a kind in each section.</string>
     <string name="triple_desc">Your entire hand is scored if you have at least three of a kind.</string>
     <string name="quad_desc">Your entire hand is scored if you have at least four of a kind.</string>
     <string name="house_desc">You get 25 points for a double and triple in the same hand.</string>
