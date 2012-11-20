@@ -4,5 +4,19 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_game">GameActivity</string>
+    <string name="aces_desc">You get one point for each ace in your hand.</string>
+    <string name="twos_desc">You get two points for each two in your hand.</string>
+    <string name="threes_desc">You get three points for each three in your hand.</string>
+    <string name="fours_desc">You get four points for each four in your hand.</string>
+    <string name="fives_desc">You get five points for each five in your hand.</string>
+    <string name="sixes_desc">You get six points for each six in your hand.</string>
+    <string name="bonus_desc">If you score 63 or more points in this section you get 35 bonus points. One way to do this is to get at least three of a kind in each section</string>
+    <string name="triple_desc">Your entire hand is scored if you have at least three of a kind.</string>
+    <string name="quad_desc">Your entire hand is scored if you have at least four of a kind.</string>
+    <string name="house_desc">You get 25 points for a double and triple in the same hand.</string>
+    <string name="sm_st_desc">You get 30 points for a straight of at least 4, such as 2 3 4 5.</string>
+    <string name="lg_st_desc">You get 40 points for a straight of five, such as 1 2 3 4 5.</string>
+    <string name="yahtzee_desc">You get 50 points for five of a kind.</string>
+    <string name="chance_desc">Your entire hand is scored.</string>
 
 </resources>
