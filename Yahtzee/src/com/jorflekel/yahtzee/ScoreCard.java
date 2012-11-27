@@ -92,5 +92,12 @@ public class ScoreCard {
 		}
 		return sum;
 	}
+	
+	public boolean isDone() {
+		boolean done = true;
+		for(String section : SECTIONS) {
+			done = done ? scores.containsKey(section);
+		}
+	}
 
 }
