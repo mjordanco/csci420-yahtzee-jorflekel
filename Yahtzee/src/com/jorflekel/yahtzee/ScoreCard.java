@@ -81,6 +81,15 @@ public class ScoreCard {
 
 		return (best - deficit);
 	}
+	
+	public boolean isUpperSectionDone() {
+		boolean done = true;
+		for(int i = 0; i < UPPER_SECTION.length - 1; i++) {
+			String section = UPPER_SECTION[i];
+			done = done && scores.containsKey(section);
+		}
+		return done;
+	}
 
 	public int getUpperScore() {
 		int sum = 0;
@@ -96,8 +105,20 @@ public class ScoreCard {
 	public boolean isDone() {
 		boolean done = true;
 		for(String section : SECTIONS) {
-			done = done ? scores.containsKey(section);
+			done = done && scores.containsKey(section) || section.equals("bonus");
 		}
+		return done;
+	}
+
+	public int getTotalScore() {
+		int sum = 0;
+		for (String s : SECTIONS) {
+			if (scores.containsKey(s))
+				sum += getScore(s);
+			else
+				Log.d("ScoreCard", "Does not contain value for key " + s);
+		}
+		return sum;
 	}
 
 }

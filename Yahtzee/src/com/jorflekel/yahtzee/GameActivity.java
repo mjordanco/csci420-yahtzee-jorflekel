@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -129,7 +130,7 @@ public class GameActivity extends Activity implements SensorEventListener {
     	MediaPlayer player = MediaPlayer.create(this, R.raw.roll);
     	player.start();
     	for(TextView tv : scoreBoxes) {
-    		if(tv.getTag(R.id.scoreId) == null && !(tv.getId() == R.id.upperBonusScore))
+    		if(tv.getTag(R.id.scoreId) == null)
     			tv.setText("" + ((Hand)tv.getTag(R.id.handId)).score(hand));
     	}
     }
@@ -155,13 +156,23 @@ public class GameActivity extends Activity implements SensorEventListener {
     		int upperScore = scoreCard.getUpperScore();
     		Log.d("GameActivity", "" + upperScore);
     		if(scoreCard.getUpperScore() >= 63) {
-    			((TextView) findViewById(R.id.upperBonusScore)).setText("35");
-    			((TextView) findViewById(R.id.upperBonusScore)).setTextColor(Color.parseColor("#254117"));
+    			bonus.setText("35");
+    			bonus.setTextColor(Color.parseColor("#254117"));
+    			bonus.setTag(35);
     			scoreCard.setScore("bonus", 35);
     		} else {
     			((TextView) findViewById(R.id.upperBonusScore)).setText("" + (63 - scoreCard.getUpperScore()) + " more");
     		}
     		clearEmptyScores();
+    		if(scoreCard.isUpperSectionDone() && bonus.getTag() == null) {
+    			scoreCard.setScore("bonus", 0);
+    			bonus.setTag(0);
+    		}
+    		if(scoreCard.isDone()) {
+    			new AlertDialog.Builder(this).setTitle("Game Over!")
+    			.setMessage("Congratulations! You scored " + scoreCard.getTotalScore())
+    			.create().show();
+    		}
     	}
     }
     
@@ -232,7 +243,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 	public void onSensorChanged(SensorEvent event) {
 		if(!paused) {
 			float nYA = event.values[1];
-			if(Math.abs(nYA) > .5 && Math.abs(yA) > .5 && Math.signum(nYA) == -Math.signum(yA) && rollsSinceMove < 3 & System.currentTimeMillis() - shakeTime > 3000) {
+			if(Math.abs(nYA) > .3 && Math.abs(yA) > .3 && Math.signum(nYA) == -Math.signum(yA) && rollsSinceMove < 3 & System.currentTimeMillis() - shakeTime > 2000) {
 				startTurn();
 				shakeTime = System.currentTimeMillis();
 			}
