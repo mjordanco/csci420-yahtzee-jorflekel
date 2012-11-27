@@ -28,11 +28,12 @@ public class ScoreCard {
 
 		for (int i = 0; i < SECTIONS.length; i++) {
 			optimal.put(SECTIONS[i], OPTIMAL_SCORES[i]);
-			scores.put(SECTIONS[i], -1);
+//			 scores.put(SECTIONS[i], -1);
 		}
 	}
 
 	public void setScore(String section, int val) {
+		section =  section.toLowerCase();
 		boolean valid = false;
 		for (String s : SECTIONS) {
 			valid = valid || section.equalsIgnoreCase(s);
@@ -47,9 +48,10 @@ public class ScoreCard {
 	}
 
 	public int getScore(String section) {
+		section = section.toLowerCase();
 		boolean valid = false;
 		for (String s : SECTIONS) {
-			valid = valid || section.equalsIgnoreCase(s);
+			valid = valid || section.equals(s);
 		}
 		if (valid) {
 			return scores.get(section);
@@ -82,8 +84,11 @@ public class ScoreCard {
 
 	public int getUpperScore() {
 		int sum = 0;
-		for(String s : UPPER_SECTION) {
-			sum += getScore(s) != -1 ? getScore(s) : 0;
+		for (String s : UPPER_SECTION) {
+			if (scores.containsKey(s))
+				sum += getScore(s);
+			else
+				Log.d("ScoreCard", "Does not contain value for key " + s);
 		}
 		return sum;
 	}

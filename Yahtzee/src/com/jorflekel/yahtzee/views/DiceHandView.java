@@ -52,13 +52,10 @@ public class DiceHandView extends FrameLayout {
 	public int[] roll() {
 		for(int i = 0; i < 5; i++) {
 			dice[i].setEnabled(true);
-			Log.d("FVNEIZA", " ");
-			Log.d("FVNEIZA", "Old die value: " +hand[i]);
 			if(!dice[i].isChecked()) {
 				hand[i] = (int) (Math.random() * 6 + 1);
 			} else {
 			}
-			Log.d("FVNEIZA", "New die value: " +hand[i]);
     	}
     	setHand();
 		return hand;

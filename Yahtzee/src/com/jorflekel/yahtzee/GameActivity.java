@@ -13,6 +13,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -97,6 +98,8 @@ public class GameActivity extends Activity implements SensorEventListener {
         
         rollsLabel = (TextView) findViewById(R.id.rollsLabel);
         
+        bonus.setText("63 more");
+        
         SensorManager sensors = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensors.registerListener(this, sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 100);
     }
@@ -126,14 +129,14 @@ public class GameActivity extends Activity implements SensorEventListener {
     	MediaPlayer player = MediaPlayer.create(this, R.raw.roll);
     	player.start();
     	for(TextView tv : scoreBoxes) {
-    		if(tv.getTag(R.id.scoreId) == null)
+    		if(tv.getTag(R.id.scoreId) == null && !(tv.getId() == R.id.upperBonusScore))
     			tv.setText("" + ((Hand)tv.getTag(R.id.handId)).score(hand));
     	}
     }
     
     public void clearEmptyScores() {
     	for(TextView tv : scoreBoxes) {
-    		if(tv.getTag(R.id.scoreId) == null)
+    		if(tv.getTag(R.id.scoreId) == null && !(tv.getId() == R.id.upperBonusScore))
     			tv.setText("");
     	}
     }
@@ -149,13 +152,15 @@ public class GameActivity extends Activity implements SensorEventListener {
     		diceHandView.toggleOff();
     		rollsLabel.setText("3");
     		scoreCard.setScore(((Hand)v.getTag(R.id.handId)).getName(), ((Hand)v.getTag(R.id.handId)).score(hand));
-//    		if(scoreCard.getUpperScore() >= 63) {
-//    			((TextView) findViewById(R.id.upperBonusScore)).setText("35");
-//    			((TextView) findViewById(R.id.upperBonusScore)).setTextColor(Color.parseColor("#254117"));
-//    			scoreCard.setScore("bonus", 35);
-//    		} else {
-//    			((TextView) findViewById(R.id.upperBonusScore)).setText("" + (63 - scoreCard.getUpperScore()) + " more");
-//    		}
+    		int upperScore = scoreCard.getUpperScore();
+    		Log.d("GameActivity", "" + upperScore);
+    		if(scoreCard.getUpperScore() >= 63) {
+    			((TextView) findViewById(R.id.upperBonusScore)).setText("35");
+    			((TextView) findViewById(R.id.upperBonusScore)).setTextColor(Color.parseColor("#254117"));
+    			scoreCard.setScore("bonus", 35);
+    		} else {
+    			((TextView) findViewById(R.id.upperBonusScore)).setText("" + (63 - scoreCard.getUpperScore()) + " more");
+    		}
     		clearEmptyScores();
     	}
     }
@@ -221,15 +226,30 @@ public class GameActivity extends Activity implements SensorEventListener {
 
 	private float yA = 0;
 	private long shakeTime = 0;
+	private boolean paused;
 	
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		float nYA = event.values[1];
-		if(Math.abs(nYA) > .5 && Math.abs(yA) > .5 && Math.signum(nYA) == -Math.signum(yA) && rollsSinceMove < 3 & System.currentTimeMillis() - shakeTime > 3000) {
-			startTurn();
-			shakeTime = System.currentTimeMillis();
+		if(!paused) {
+			float nYA = event.values[1];
+			if(Math.abs(nYA) > .5 && Math.abs(yA) > .5 && Math.signum(nYA) == -Math.signum(yA) && rollsSinceMove < 3 & System.currentTimeMillis() - shakeTime > 3000) {
+				startTurn();
+				shakeTime = System.currentTimeMillis();
+			}
+			yA = nYA;
 		}
-		yA = nYA;
 	}
-    
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		paused = true;
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		paused = false;
+	}
+	
 }

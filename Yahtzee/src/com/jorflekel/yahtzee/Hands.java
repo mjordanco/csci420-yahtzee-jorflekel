@@ -1,6 +1,8 @@
 package com.jorflekel.yahtzee;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Hands {
 
@@ -268,10 +270,14 @@ public class Hands {
 
 		@Override
 		public int score(int[] hand) {
-			int[] copy = hand.clone();
+			Set<Integer> set = new HashSet<Integer>();
+			for(int i : hand) {
+				set.add(i);
+			}
+			Integer[] copy = set.toArray(new Integer[] {});
 			Arrays.sort(copy);
-			if ((copy[0] == copy[1] - 1 && copy[1] == copy[2] - 1  && copy[2] == copy[3] - 1)
-					|| (copy[1] == copy[2] - 1 && copy[2] == copy[3] - 1 && copy[3] == copy[4] - 1))
+			if ((copy.length >= 4 && copy[0] == copy[1] - 1 && copy[1] == copy[2] - 1  && copy[2] == copy[3] - 1)
+					|| (copy.length >= 5 && copy[1] == copy[2] - 1 && copy[2] == copy[3] - 1 && copy[3] == copy[4] - 1))
 				return 30;
 			return 0;
 		}
