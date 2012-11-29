@@ -149,7 +149,8 @@ public class ProbHelper {
 		
 		return result;
 	}
-	public boolean containsComb(int comb, int[] set) {
+	public boolean containsComb(int comb, int[] hand) {
+		int[] set = hand.clone();
 		boolean result = false;
 		boolean innerResult = true;
 		Arrays.sort(set);
@@ -165,7 +166,13 @@ public class ProbHelper {
 				innerResult = true;
 			}
 		}else if( comb == HOUSE) {
-			return containsComb(2, set) && containsComb(3, set);
+			if(set.length < 5) return false;
+			boolean firstTwo = containsComb(2, new int[] {set[0], set[1]});
+			boolean lastTwo = containsComb(2, new int[] {set[3], set[4]});
+			boolean firstThree = containsComb(3, new int[] {set[0], set[1], set[2]});
+			boolean lastThree = containsComb(3, new int[] {set[2], set[3], set[4]});
+			
+			return ((firstTwo && lastThree) || (firstThree && lastTwo));
 		} else {
 			if(set.length < comb) return false;
 			for(int i = 0; i < (set.length-comb+1); i++) {
