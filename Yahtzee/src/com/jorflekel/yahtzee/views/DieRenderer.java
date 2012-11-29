@@ -1,4 +1,4 @@
-package com.example.diceview2;
+package com.jorflekel.yahtzee.views;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -7,6 +7,8 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import com.jorflekel.yahtzee.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;

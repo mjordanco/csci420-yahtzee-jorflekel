@@ -130,7 +130,7 @@ public class GameActivity extends Activity implements SensorEventListener {
     	MediaPlayer player = MediaPlayer.create(this, R.raw.roll);
     	player.start();
     	for(TextView tv : scoreBoxes) {
-    		if(tv.getTag(R.id.scoreId) == null)
+    		if(tv.getTag(R.id.scoreId) == null && tv != bonus)
     			tv.setText("" + ((Hand)tv.getTag(R.id.handId)).score(hand));
     	}
     }
