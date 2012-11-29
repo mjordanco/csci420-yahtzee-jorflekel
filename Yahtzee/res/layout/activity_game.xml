@@ -18,6 +18,7 @@
                 android:id="@+id/DieGLSurfaceView1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_above="@+id/diceHandView"
                 android:layout_weight=".5" />
 
             <ImageView

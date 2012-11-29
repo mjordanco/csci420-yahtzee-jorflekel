@@ -4,11 +4,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-import com.jorflekel.yahtzee.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,8 +17,9 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 import android.util.Log;
+
+import com.jorflekel.yahtzee.R;
 
 
 public class DieRenderer implements Renderer{
@@ -168,13 +169,28 @@ public class DieRenderer implements Renderer{
 	// For smooth translation demo
 	int transTracker = 0;
 	
+	// Defines the "playable" boundaries for the dice
+	float boundary = 3.0f;
+	float ratio = 1.0f;
+	
 	// The current state of the cube/die
 	// TODO: Extend to multiple dice
-	DieState die;
+	ArrayList<DieState> dice = new ArrayList<DieState>();
 
 	public DieRenderer(Context c){
-		// Initialize the state of our die stand-in
-		die = new DieState();
+		// Initialize the state of our dice stand-ins
+		Random r = new Random();
+		for(int i = 0; i < 5; i++){
+			DieState die = new DieState();
+			double angle = (r.nextFloat()*2*Math.PI);
+			die.vel[0] = (float) (Math.cos(angle));
+			die.vel[1] = (float) (Math.sin(angle));
+			double speed = Math.sqrt(Math.pow(die.vel[0], 2)+Math.pow(die.vel[1], 2));
+			double scaleF = 0.25f / speed;
+			die.vel[0] *= scaleF;
+			die.vel[1] *= scaleF;
+			dice.add(die);
+		}
 		// Hold onto the host context
 		hostContext = c;
 	}
@@ -182,17 +198,49 @@ public class DieRenderer implements Renderer{
 	private class DieState{
 		public float translation[];
 		public float rotation[];
+		public float vel[];
+		private float coord[];
 		public DieState(){
 			translation = new float[16];
 			rotation = new float[16];
+			vel = new float[2];
+			coord = new float[2];
 			Matrix.setIdentityM(rotation, 0);
 			Matrix.setIdentityM(translation, 0);
+			vel[0] = 0;
+			vel[1] = 0;
+			coord[0] = 0;
+			coord[1] = 0;
+		}
+		public void move(){
+			float diag = (float) (Math.sqrt(0.5*0.5+0.5*0.5+0.5*0.5)*.9);
+			Random r = new Random();
+			if(coord[0] > boundary*ratio-diag || coord[0] < -boundary*ratio+diag){
+				vel[0] *= -1;
+			}
+			if(coord[1] > boundary-diag || coord[1] < -boundary+diag){
+				vel[1] *= -1;
+			}
+			coord[0] += vel[0];
+			coord[1] += vel[1];
+			translate(vel[0], vel[1], 0);
+			// TODO: Cross product, rotate
+			float axis[] = new float[3];
+			axis[0] =  (float) (-1.0 * vel[1]);
+			axis[1] =  (float) (1.0 * vel[0]);
+			axis[2] = 0;
+			rotate(5.0f, axis[0], axis[1], axis[2]);
 		}
 		public void translate(float dx, float dy, float dz){
 			Matrix.translateM(translation, 0, dx, dy, dz);
 		}
 		public void rotate(float angle, float ax, float ay, float az){
-			Matrix.rotateM(rotation, 0, angle, ax, ay, az);
+			if(ax == 0 && ay == 0 && az == 0){
+				return;
+			}
+			Matrix.setIdentityM(tempMatrixA, 0);
+			Matrix.rotateM(tempMatrixA, 0, angle, ax, ay, az);
+			Matrix.multiplyMM(rotation, 0, tempMatrixA, 0, rotation, 0);
 		}
 		public void resetTranslate(){
 			Matrix.setIdentityM(translation, 0);
@@ -287,14 +335,6 @@ public class DieRenderer implements Renderer{
 		
 		vertexTexCoordGLBuffer = buffers[2];
 		loadFloatsIntoBuffer(GLES20.GL_ARRAY_BUFFER, texCoords, vertexTexCoordGLBuffer);
-		
-		/*
-		 * Step Six: Populate the static uniform variables
-		 */
-		// TODO: Is this not working?
-		//GLES20.glUniform4f(shaderColorU, color[0], color[1], color[2], color[3]);
-		//GLES20.glUniform3f(shaderLightPosU, lightPos[0], lightPos[1], lightPos[2]);
-		//GLES20.glUniform1f(shaderAmbientU, ambientTerm);
 	}
 
 	/*
@@ -307,8 +347,9 @@ public class DieRenderer implements Renderer{
 	 */
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		GLES20.glViewport(0, 0, width, height);
-		float ratio = (float)width / height;
-		Matrix.frustumM(projMatrix, 0, -ratio*2, ratio*2, -2, 2, 49, 51);
+		ratio = (float)width / height;
+		float units = boundary;
+		Matrix.frustumM(projMatrix, 0, -ratio*units, ratio*units, -units, units, 49, 51);
 	}
 
 	@Override
@@ -346,34 +387,7 @@ public class DieRenderer implements Renderer{
 	    GLES20.glUniform1i(shaderDieTexSamplerU, 0);
 		
 		/*
-		 * Step Two: Update and populate our uniforms that change from frame to frame.
-		 */
-		GLES20.glUniform4f(shaderColorU, color[0], color[1], color[2], color[3]);
-		GLES20.glUniform3f(shaderLightPosU, lightPos[0], lightPos[1], lightPos[2]);
-		GLES20.glUniform1f(shaderAmbientU, ambientTerm);
-		
-		// Basically, what degree of revolution are we on?
-		transTracker = (transTracker > 360 ? 0 : transTracker+1);
-		// Rotate kinda sort along the direction it's "moving"
-	    die.rotate(1.0f, (float)Math.cos(2*Math.PI*transTracker/360), (float)Math.sin(2*Math.PI*transTracker/360), 0.0f);
-	    // Forcibly translate along a sinusoidal loop
-	    die.resetTranslate();
-	    die.translate((float)Math.cos(2*Math.PI*transTracker/360), (float)Math.sin(2*Math.PI*transTracker/360), 0);
-	    
-	    Matrix.setIdentityM(tempMatrixA, 0);
-	    Matrix.setIdentityM(tempMatrixB, 0);
-	    
-		Matrix.setLookAtM(tempMatrixB, 0, 0, 0, 50, 0, 0, 0, 0, 1, 0);
-		
-		Matrix.multiplyMM(tempMatrixA, 0, die.rotation, 0, tempMatrixA, 0); // Rotate
-		Matrix.multiplyMM(tempMatrixA, 0, die.translation, 0, tempMatrixA, 0); // Translate
-		Matrix.multiplyMM(tempMatrixA, 0, tempMatrixB, 0, tempMatrixA, 0); // Look
-		Matrix.multiplyMM(tempMatrixA, 0, projMatrix, 0, tempMatrixA, 0); // Project
-		GLES20.glUniformMatrix4fv(shaderModelViewProjMatrixU, 1, false, tempMatrixA, 0); // Push Model/View/Projection matrix
-		GLES20.glUniformMatrix4fv(shaderRotMatrixU, 1, false, die.rotation, 0); // Push Rotation matrix, for normals
-		
-		/*
-		 * Step Three: Instruct openGL to draw the frame
+		 * Step Two: Decide what elements to draw
 		 */
 		short elements[] = new short[drawOrder.length];
 		for(short i = 0; i < elements.length; i++){
@@ -382,7 +396,33 @@ public class DieRenderer implements Renderer{
 		ByteBuffer bb = ByteBuffer.allocateDirect(elements.length*Short.SIZE).order(ByteOrder.nativeOrder());
 		ShortBuffer sb = bb.asShortBuffer();
 		sb.put(elements).position(0);
-		GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, sb);
+		
+		/*
+		 * Step Three: Update and populate our uniforms that change from frame to frame and draw
+		 */
+		GLES20.glUniform4f(shaderColorU, color[0], color[1], color[2], color[3]);
+		GLES20.glUniform3f(shaderLightPosU, lightPos[0], lightPos[1], lightPos[2]);
+		GLES20.glUniform1f(shaderAmbientU, ambientTerm);
+		
+		// Basically, what degree of revolution are we on?
+		transTracker = (transTracker > 360 ? 0 : transTracker+1);
+		for(DieState die : dice){
+			die.move();
+	    
+		    Matrix.setIdentityM(tempMatrixA, 0);
+		    Matrix.setIdentityM(tempMatrixB, 0);
+		    
+			Matrix.setLookAtM(tempMatrixB, 0, 0, 0, 50, 0, 0, 0, 0, 1, 0);
+			
+			Matrix.multiplyMM(tempMatrixA, 0, die.rotation, 0, tempMatrixA, 0); // Rotate
+			Matrix.multiplyMM(tempMatrixA, 0, die.translation, 0, tempMatrixA, 0); // Translate
+			Matrix.multiplyMM(tempMatrixA, 0, tempMatrixB, 0, tempMatrixA, 0); // Look
+			Matrix.multiplyMM(tempMatrixA, 0, projMatrix, 0, tempMatrixA, 0); // Project
+			GLES20.glUniformMatrix4fv(shaderModelViewProjMatrixU, 1, false, tempMatrixA, 0); // Push Model/View/Projection matrix
+			GLES20.glUniformMatrix4fv(shaderRotMatrixU, 1, false, die.rotation, 0); // Push Rotation matrix, for normals
+			
+			GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, sb);
+		}
 		
 		/*
 		 * Step Four: Shut down the vertex arrays
