@@ -76,6 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_below="@+id/RelativeLayout2"
+            android:layout_marginBottom="10dp"
             android:layout_weight="1" >
 
             <LinearLayout
@@ -651,5 +652,32 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <SlidingDrawer
+        android:id="@+id/slidingDrawer1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:content="@+id/content"
+        android:handle="@+id/handle" >
+
+        <android.view.View
+            android:id="@+id/handle"
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"
+            android:background="#FF0000" />
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#000000" >
+
+            <include
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/probability_helper" />
+
+        </LinearLayout>
+    </SlidingDrawer>
 
 </RelativeLayout>
