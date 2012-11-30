@@ -179,16 +179,8 @@ public class DieRenderer implements Renderer{
 
 	public DieRenderer(Context c){
 		// Initialize the state of our dice stand-ins
-		Random r = new Random();
 		for(int i = 0; i < 5; i++){
 			DieState die = new DieState();
-			double angle = (r.nextFloat()*2*Math.PI);
-			die.vel[0] = (float) (Math.cos(angle));
-			die.vel[1] = (float) (Math.sin(angle));
-			double speed = Math.sqrt(Math.pow(die.vel[0], 2)+Math.pow(die.vel[1], 2));
-			double scaleF = 0.25f / speed;
-			die.vel[0] *= scaleF;
-			die.vel[1] *= scaleF;
 			dice.add(die);
 		}
 		// Hold onto the host context
@@ -229,7 +221,7 @@ public class DieRenderer implements Renderer{
 			axis[0] =  (float) (-1.0 * vel[1]);
 			axis[1] =  (float) (1.0 * vel[0]);
 			axis[2] = 0;
-			rotate(5.0f, axis[0], axis[1], axis[2]);
+			rotate(20.0f, axis[0], axis[1], axis[2]);
 		}
 		public void translate(float dx, float dy, float dz){
 			Matrix.translateM(translation, 0, dx, dy, dz);
@@ -247,6 +239,24 @@ public class DieRenderer implements Renderer{
 		}
 		public void resetRotate(){
 			Matrix.setIdentityM(rotation, 0);
+		}
+	}
+	public void startBounce(){
+		Random r = new Random();
+		for(DieState die : dice){
+			double angle = (r.nextFloat()*2*Math.PI);
+			die.vel[0] = (float) (Math.cos(angle));
+			die.vel[1] = (float) (Math.sin(angle));
+			double speed = Math.sqrt(Math.pow(die.vel[0], 2)+Math.pow(die.vel[1], 2));
+			double scaleF = 0.25f / speed;
+			die.vel[0] *= scaleF;
+			die.vel[1] *= scaleF;
+		}
+	}
+	public void endBounce(){
+		for(DieState die : dice){
+			die.vel[0] *= 0;
+			die.vel[1] *= 0;
 		}
 	}
 

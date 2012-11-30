@@ -14,6 +14,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.jorflekel.yahtzee.Hands.Hand;
 import com.jorflekel.yahtzee.views.DiceHandView;
+import com.jorflekel.yahtzee.views.DieGLSurfaceView;
 import com.jorflekel.yahtzee.views.HelpDialog;
 
 public class GameActivity extends Activity implements SensorEventListener {
@@ -133,6 +135,15 @@ public class GameActivity extends Activity implements SensorEventListener {
     		if(tv.getTag(R.id.scoreId) == null && tv != bonus)
     			tv.setText("" + ((Hand)tv.getTag(R.id.handId)).score(hand));
     	}
+    	final DieGLSurfaceView glview = (DieGLSurfaceView) findViewById(R.id.DieGLSurfaceView1);
+    	glview.renderer.startBounce();
+    	final Handler handler = new Handler();
+    	handler.postDelayed(new Runnable() {
+    	  @Override
+    	  public void run() {
+    	    glview.renderer.endBounce();
+    	  }
+    	}, 1000);
     }
     
     public void clearEmptyScores() {
