@@ -15,8 +15,7 @@ import com.jorflekel.yahtzee.ProbHelper;
 import com.jorflekel.yahtzee.R;
 
 public class DiceHandView extends FrameLayout implements OnCheckedChangeListener{
-	public ProbHelper probHelper;
-	public TextView probViews[];
+
 	public interface HandChangeListener {
 		public void onHeldChanged(boolean[] held);
 		public void onHandChanged(int[] hand);
@@ -34,6 +33,7 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 
 	private int[] hand;
 	private HandChangeListener handChangeListener;
+	private boolean hideNotHeld;
 	
 	public DiceHandView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -42,9 +42,9 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		dice = new ToggleButton[5];
 		for(int i = 0; i < 5; i++) {
 			dice[i] = (ToggleButton) findViewById(ids[i]);
+			dice[i].setOnCheckedChangeListener(this);
 		}
 
-		probHelper = ProbHelper.instance();
 		hand = new int[] {1,1,1,1,1};
 		setHand();
 	}
@@ -57,41 +57,22 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 	
 	public void setHand() {
 		for(int i = 0; i < 5; i++) {
-			if(dice[i].isChecked()) {
+			if(dice[i].isChecked() || !isHideNotHeld()) {
 				dice[i].setText("" + hand[i]);
 				dice[i].setTextOn("" + hand[i]);
+				dice[i].setTextOff("" + hand[i]);
 			} else {
 				dice[i].setText("?");
 				dice[i].setTextOn("" + hand[i]);
 				dice[i].setTextOff("?");
 			}
 		}
-		updateProb();
+		if(handChangeListener != null) handChangeListener.onHandChanged(hand);
 	}
-	private void updateProb() {
-		int numHeld = 0;
-		for(int i = 0; i < 5; i++) {
-			if(dice[i].isChecked()) {
-				numHeld++;
-			}
-		}
-		int[] hand = new int[numHeld];
-		int count = 0;
-		for(int i = 0; i < 5; i++) {
-			if(dice[i].isChecked()) {
-				hand[count]=Integer.parseInt((String) dice[i].getText());
-				count++;
-			}
-		}
-		probViews[0].setText(Double.toString(probHelper.probOfComb(3, hand, (5-numHeld), 1)));
-		probViews[1].setText(Double.toString(probHelper.probOfComb(4, hand, (5-numHeld), 1)));
-		probViews[2].setText(Double.toString(probHelper.probOfComb(5, hand, (5-numHeld), 1)));
-		probViews[3].setText(Double.toString(probHelper.probOfComb(ProbHelper.SM_STRAIGHT, hand, (5-numHeld), 1)));
-		probViews[4].setText(Double.toString(probHelper.probOfComb(ProbHelper.LG_STRAIGHT, hand, (5-numHeld), 1)));
-		probViews[5].setText(Double.toString(probHelper.probOfComb(ProbHelper.HOUSE, hand, (5-numHeld), 1)));
-	}
+	
 	public void setHand(int[] hand) {
 		this.hand = hand;
+		setHand();
 	}
 
 	public int[] roll() {
@@ -131,8 +112,8 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		}
 	}
 
-	public void setHeldChangeListener(HandChangeListener heldChangeListener) {
-		this.handChangeListener = heldChangeListener;
+	public void setHandChangeListener(HandChangeListener handChangeListener) {
+		this.handChangeListener = handChangeListener;
 	}
 
 	@Override
@@ -145,5 +126,26 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		if(handChangeListener != null) {
 			handChangeListener.onHeldChanged(held);
 		}
+		setHand();
+	}
+	
+	public boolean[] getHeld() {
+		boolean[] held = new boolean[5];
+		for(int i = 0; i < 5; i++) {
+			held[i] = dice[i].isChecked();
+		}
+		return held;
+	}
+
+	public boolean isHideNotHeld() {
+		return hideNotHeld;
+	}
+
+	public void setHideNotHeld(boolean hideNotHeld) {
+		this.hideNotHeld = hideNotHeld;
+	}
+
+	public int[] getHand() {
+		return hand;
 	}
 }
