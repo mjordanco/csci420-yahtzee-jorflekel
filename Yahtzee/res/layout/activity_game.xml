@@ -7,6 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/handle"
+        android:layout_marginBottom="50dp"
         android:orientation="vertical" >
 
         <RelativeLayout
@@ -15,7 +17,7 @@
             android:layout_weight="1" >
 
             <com.jorflekel.yahtzee.views.DieGLSurfaceView
-                android:id="@+id/DieGLSurfaceView1"
+                android:id="@+id/dieGLSurfaceView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/diceHandView"
@@ -76,7 +78,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_below="@+id/RelativeLayout2"
-            android:layout_marginBottom="10dp"
             android:layout_weight="1" >
 
             <LinearLayout
@@ -654,17 +655,21 @@
     </LinearLayout>
 
     <SlidingDrawer
-        android:id="@+id/slidingDrawer1"
+        android:id="@+id/drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:content="@+id/content"
         android:handle="@+id/handle" >
 
-        <android.view.View
+        <TextView
             android:id="@+id/handle"
-            android:layout_width="wrap_content"
-            android:layout_height="10dp"
-            android:background="#FF0000" />
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#000000"
+            android:gravity="center"
+            android:text="PROBABILITIES"
+            android:textColor="#FFFFFF"
+            android:textSize="25dp" />
 
         <LinearLayout
             android:id="@+id/content"
@@ -672,10 +677,11 @@
             android:layout_height="match_parent"
             android:background="#000000" >
 
-            <include
+            <com.jorflekel.yahtzee.views.ProbabilityHelperView
+                android:id="@+id/probabilityHelperView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                layout="@layout/probability_helper" />
+                android:layout_height="wrap_content" >
+            </com.jorflekel.yahtzee.views.ProbabilityHelperView>
 
         </LinearLayout>
     </SlidingDrawer>

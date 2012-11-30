@@ -1,14 +1,17 @@
 package com.jorflekel.yahtzee.views;
 
 import android.content.Context;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.jorflekel.yahtzee.ProbHelper;
 import com.jorflekel.yahtzee.R;
 
 public class DiceHandView extends FrameLayout implements OnCheckedChangeListener{
@@ -30,6 +33,7 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 
 	private int[] hand;
 	private HandChangeListener handChangeListener;
+	private boolean hideNotHeld;
 	
 	public DiceHandView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -38,9 +42,11 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		dice = new ToggleButton[5];
 		for(int i = 0; i < 5; i++) {
 			dice[i] = (ToggleButton) findViewById(ids[i]);
+			dice[i].setOnCheckedChangeListener(this);
 		}
-		
-		hand = new int[5];
+
+		hand = new int[] {1,1,1,1,1};
+		setHand();
 	}
 	
 	public void toggleOff() {
@@ -51,14 +57,22 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 	
 	public void setHand() {
 		for(int i = 0; i < 5; i++) {
-			dice[i].setText("" + hand[i]);
-			dice[i].setTextOn("" + hand[i]);
-			dice[i].setTextOff("" + hand[i]);
+			if(dice[i].isChecked() || !isHideNotHeld()) {
+				dice[i].setText("" + hand[i]);
+				dice[i].setTextOn("" + hand[i]);
+				dice[i].setTextOff("" + hand[i]);
+			} else {
+				dice[i].setText("?");
+				dice[i].setTextOn("" + hand[i]);
+				dice[i].setTextOff("?");
+			}
 		}
+		if(handChangeListener != null) handChangeListener.onHandChanged(hand);
 	}
 	
 	public void setHand(int[] hand) {
 		this.hand = hand;
+		setHand();
 	}
 
 	public int[] roll() {
@@ -98,8 +112,8 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		}
 	}
 
-	public void setHeldChangeListener(HandChangeListener heldChangeListener) {
-		this.handChangeListener = heldChangeListener;
+	public void setHandChangeListener(HandChangeListener handChangeListener) {
+		this.handChangeListener = handChangeListener;
 	}
 
 	@Override
@@ -112,5 +126,26 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		if(handChangeListener != null) {
 			handChangeListener.onHeldChanged(held);
 		}
+		setHand();
+	}
+	
+	public boolean[] getHeld() {
+		boolean[] held = new boolean[5];
+		for(int i = 0; i < 5; i++) {
+			held[i] = dice[i].isChecked();
+		}
+		return held;
+	}
+
+	public boolean isHideNotHeld() {
+		return hideNotHeld;
+	}
+
+	public void setHideNotHeld(boolean hideNotHeld) {
+		this.hideNotHeld = hideNotHeld;
+	}
+
+	public int[] getHand() {
+		return hand;
 	}
 }

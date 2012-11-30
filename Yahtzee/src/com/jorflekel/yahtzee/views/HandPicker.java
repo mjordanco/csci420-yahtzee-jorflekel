@@ -9,9 +9,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jorflekel.yahtzee.R;
+import com.jorflekel.yahtzee.views.DiceHandView.HandChangeListener;
 
-public class HandPicker extends LinearLayout {
+public class HandPicker extends LinearLayout implements HandChangeListener{
 
+	public interface OnHandChangedListener {
+		public void onHandChanged(int[] hand);
+		public void onHeldChanged(boolean[] held);
+	}
+	
 	private static final int[] upIds = new int[] {
 		R.id.die1Up,
 		R.id.die2Up,
@@ -39,6 +45,7 @@ public class HandPicker extends LinearLayout {
 	
 	private View[] diceUp, diceDown;
 	private DiceHandView handView;
+	private OnHandChangedListener onHandChangedListener;
 	
 	public HandPicker(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -56,14 +63,26 @@ public class HandPicker extends LinearLayout {
 		}
 		
 		handView = (DiceHandView) findViewById(R.id.diceHandView);
+		handView.setHideNotHeld(true);
+		handView.setHandChangeListener(this);
 	}
 	
 	public void setHand(int[] hand) {
 		handView.setHand(hand);
+		if(onHandChangedListener != null) onHandChangedListener.onHandChanged(hand);
 	}
 	
 	public void setHeld(boolean[] held) {
 		handView.setHeld(held);
+		if(onHandChangedListener != null) onHandChangedListener.onHeldChanged(held);
+	}
+	
+	public boolean[] getHeld(){
+		return handView.getHeld();
+	}
+	
+	public void setOnHandChangedListener(OnHandChangedListener onHandChangedListener) {
+		this.onHandChangedListener = onHandChangedListener;
 	}
 
 	private final OnClickListener onUpClick = new OnClickListener() {
@@ -95,5 +114,19 @@ public class HandPicker extends LinearLayout {
 		}
 		
 	};
+
+	public int[] getHand() {
+		return handView.getHand();
+	}
+
+	@Override
+	public void onHeldChanged(boolean[] held) {
+		if(onHandChangedListener != null) onHandChangedListener.onHeldChanged(held);
+	}
+
+	@Override
+	public void onHandChanged(int[] hand) {
+		if(onHandChangedListener != null) onHandChangedListener.onHandChanged(hand);
+	}
 	
 }
