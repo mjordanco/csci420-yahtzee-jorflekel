@@ -1,18 +1,22 @@
 package com.jorflekel.yahtzee.views;
 
 import android.content.Context;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.jorflekel.yahtzee.ProbHelper;
 import com.jorflekel.yahtzee.R;
 
 public class DiceHandView extends FrameLayout implements OnCheckedChangeListener{
-
+	public ProbHelper probHelper;
+	public TextView probViews[];
 	public interface HandChangeListener {
 		public void onHeldChanged(boolean[] held);
 		public void onHandChanged(int[] hand);
@@ -39,8 +43,10 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		for(int i = 0; i < 5; i++) {
 			dice[i] = (ToggleButton) findViewById(ids[i]);
 		}
-		
-		hand = new int[5];
+
+		probHelper = ProbHelper.instance();
+		hand = new int[] {1,1,1,1,1};
+		setHand();
 	}
 	
 	public void toggleOff() {
@@ -51,12 +57,39 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 	
 	public void setHand() {
 		for(int i = 0; i < 5; i++) {
-			dice[i].setText("" + hand[i]);
-			dice[i].setTextOn("" + hand[i]);
-			dice[i].setTextOff("" + hand[i]);
+			if(dice[i].isChecked()) {
+				dice[i].setText("" + hand[i]);
+				dice[i].setTextOn("" + hand[i]);
+			} else {
+				dice[i].setText("?");
+				dice[i].setTextOn("" + hand[i]);
+				dice[i].setTextOff("?");
+			}
 		}
+		updateProb();
 	}
-	
+	private void updateProb() {
+		int numHeld = 0;
+		for(int i = 0; i < 5; i++) {
+			if(dice[i].isChecked()) {
+				numHeld++;
+			}
+		}
+		int[] hand = new int[numHeld];
+		int count = 0;
+		for(int i = 0; i < 5; i++) {
+			if(dice[i].isChecked()) {
+				hand[count]=Integer.parseInt((String) dice[i].getText());
+				count++;
+			}
+		}
+		probViews[0].setText(Double.toString(probHelper.probOfComb(3, hand, (5-numHeld), 1)));
+		probViews[1].setText(Double.toString(probHelper.probOfComb(4, hand, (5-numHeld), 1)));
+		probViews[2].setText(Double.toString(probHelper.probOfComb(5, hand, (5-numHeld), 1)));
+		probViews[3].setText(Double.toString(probHelper.probOfComb(ProbHelper.SM_STRAIGHT, hand, (5-numHeld), 1)));
+		probViews[4].setText(Double.toString(probHelper.probOfComb(ProbHelper.LG_STRAIGHT, hand, (5-numHeld), 1)));
+		probViews[5].setText(Double.toString(probHelper.probOfComb(ProbHelper.HOUSE, hand, (5-numHeld), 1)));
+	}
 	public void setHand(int[] hand) {
 		this.hand = hand;
 	}

@@ -31,10 +31,9 @@ public class GameActivity extends Activity implements SensorEventListener {
 	private DiceHandView diceHandView;
 	private int[] hand;
 	private int rollsSinceMove = 0;
-	private ProbHelper probHelper;
 	private ScoreCard scoreCard;
 	private boolean moved;
-	
+	TextView[] probViews;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,8 +91,15 @@ public class GameActivity extends Activity implements SensorEventListener {
         scoreCard = new ScoreCard();
         
         diceHandView = (DiceHandView) findViewById(R.id.diceHandView);
-        
-        probHelper = ProbHelper.instance();
+        probViews = new TextView[6];
+		probViews[0] = (TextView) findViewById(R.id.threeOfAKindProb);
+		probViews[0] = (TextView) findViewById(R.id.fourOfAKindProb);
+		probViews[0] = (TextView) findViewById(R.id.yahtzeeProb);
+		probViews[0] = (TextView) findViewById(R.id.smallStraightProb);
+		probViews[0] = (TextView) findViewById(R.id.largeStraightProb);
+		probViews[0] = (TextView) findViewById(R.id.fullHouseProb);
+		
+		diceHandView.probViews = probViews;
         
         diceHandView.hideNumbers();
         
