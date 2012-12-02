@@ -1,4 +1,5 @@
 package com.jorflekel.yahtzee.views;
+import java.lang.reflect.Array;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -13,6 +14,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Interpolator;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
@@ -179,19 +181,30 @@ public class DieRenderer implements Renderer{
 
 	public DieRenderer(Context c){
 		// Initialize the state of our dice stand-ins
+		Random r = new Random();
 		for(int i = 0; i < 5; i++){
 			DieState die = new DieState();
+			die.coord[0] = -boundary + i * (5.0f / boundary);
+			die.coord[1] = 0;
+			die.translate(die.coord[0], die.coord[1], 0);
 			dice.add(die);
 		}
 		// Hold onto the host context
 		hostContext = c;
 	}
 
-	private class DieState{
+	public ArrayList<DieState> getDice(){
+		return dice;
+	}
+	
+	public class DieState{
 		public float translation[];
 		public float rotation[];
 		public float vel[];
 		private float coord[];
+		private Interpolator currInterp;
+		private long currAnimStart;
+		private long currAnimDur;
 		public DieState(){
 			translation = new float[16];
 			rotation = new float[16];
@@ -204,29 +217,42 @@ public class DieRenderer implements Renderer{
 			coord[0] = 0;
 			coord[1] = 0;
 		}
+		// Moves and rotates the die according to its velocity.
+		// Prevents exiting the playing field.
 		public void move(){
 			float diag = (float) (Math.sqrt(0.5*0.5+0.5*0.5+0.5*0.5)*.9);
-			Random r = new Random();
 			if(coord[0] > boundary*ratio-diag || coord[0] < -boundary*ratio+diag){
+				coord[0] = (coord[0] >= boundary*ratio-diag ? boundary*ratio-diag : -boundary*ratio+diag);
 				vel[0] *= -1;
 			}
 			if(coord[1] > boundary-diag || coord[1] < -boundary+diag){
+				coord[1] = (coord[1] >= boundary-diag ? boundary-diag : -boundary+diag);
 				vel[1] *= -1;
 			}
 			coord[0] += vel[0];
 			coord[1] += vel[1];
 			translate(vel[0], vel[1], 0);
-			// TODO: Cross product, rotate
 			float axis[] = new float[3];
 			axis[0] =  (float) (-1.0 * vel[1]);
 			axis[1] =  (float) (1.0 * vel[0]);
 			axis[2] = 0;
 			rotate(20.0f, axis[0], axis[1], axis[2]);
 		}
+		// Swaps velocities of the two dice
+		public void bounceAgainst(DieState target){
+			float temp[] = new float[2];
+			temp[0] = vel[0];
+			temp[1] = vel[1];
+			vel[0] = target.vel[0];
+			vel[1] = target.vel[1];
+			target.vel[0] = temp[0];
+			target.vel[1] = temp[1];
+		}
 		public void translate(float dx, float dy, float dz){
 			Matrix.translateM(translation, 0, dx, dy, dz);
 		}
 		public void rotate(float angle, float ax, float ay, float az){
+			// Disallow degenerate rotations
 			if(ax == 0 && ay == 0 && az == 0){
 				return;
 			}
@@ -239,6 +265,63 @@ public class DieRenderer implements Renderer{
 		}
 		public void resetRotate(){
 			Matrix.setIdentityM(rotation, 0);
+		}
+		public void refreshTranslate(){
+			resetTranslate();
+			translate(coord[0], coord[1], 0);
+		}
+		public void requestFaceUp(int face){
+			requestFaceUpTween(face, 0);
+		}
+		public void requestFaceUpTween(int face, int millis){
+			float normal[] = getNormalForFace(face);
+			float goal[] = new float[] {0.0f, 0.0f, 1.0f, 1.0f};
+			float axis[] = new float[4];
+			Matrix.multiplyMV(normal, 0, rotation, 0, normal, 0);
+			// normal holds the desired normal, goal the upward normal, axis nothing yet
+			
+			axis[0] = (normal[1]*goal[2]-normal[2]*goal[1]);
+			axis[1] = (normal[2]*goal[0]-normal[0]*goal[2]);
+			axis[2] = (normal[0]*goal[1]-normal[1]*goal[0]);
+			for(float f : axis){
+				f = (f < 0 ? 0 : f);
+			}
+			if(axis[0] == 0 && axis[1] == 0 && axis[2] == 0){
+				axis[0] = 1;
+			}
+			// axis holds the axis to rotate along
+			
+			// TODO: Tweening with interpolator/runnable
+			double angle = Math.acos(normal[0]*goal[0] + normal[1]*goal[1] + normal[2]*goal[2]);
+			// Cast angle to float and degrees
+			rotate((float) (180.0f * angle / Math.PI), axis[0], axis[1], axis[2]);
+		}		
+		public float[] getNormalForFace(int face){
+			float norm[];
+			switch(face){
+			case 1:
+				norm = new float[] {0.0f, -1.0f, 0.0f, 1.0f};
+				return norm;
+			case 2:
+				norm = new float[] {0.0f, 0.0f, 1.0f, 1.0f};
+				return norm;
+			case 3:
+				norm = new float[] {-1.0f, 0.0f, 0.0f, 1.0f};
+				return norm;
+			case 4:
+				norm = new float[] {1.0f, 0.0f, 0.0f, 1.0f};
+				return norm;
+			case 5:
+				norm = new float[] {0.0f, 0.0f, -1.0f, 1.0f};
+				return norm;
+			case 6:
+				norm = new float[] {0.0f, 1.0f, 0.0f, 1.0f};
+				return norm;
+			}
+			return new float[] {0.0f, 0.0f, 0.0f, 1.0f};
+		}
+		private float rotateStep(){
+			return 0;
 		}
 	}
 	public void startBounce(){
@@ -257,6 +340,19 @@ public class DieRenderer implements Renderer{
 		for(DieState die : dice){
 			die.vel[0] *= 0;
 			die.vel[1] *= 0;
+			for(DieState other : dice){
+				if(die == other){
+					continue;
+				}
+				else{
+					if(Math.sqrt(Math.pow(other.coord[0]-die.coord[0], 2)+Math.pow(other.coord[1]-die.coord[1], 2)) 
+					   <
+					  (Math.sqrt(3 * Math.pow(0.5, 2)))
+					  ){
+					die.translate(die.coord[0]-other.coord[0], die.coord[1]-other.coord[1], 0);
+					}					
+				}
+			}
 		}
 	}
 
@@ -415,15 +511,27 @@ public class DieRenderer implements Renderer{
 		GLES20.glUniform1f(shaderAmbientU, ambientTerm);
 		
 		// Basically, what degree of revolution are we on?
-		transTracker = (transTracker > 360 ? 0 : transTracker+1);
+		for(int i = 0; i < dice.size(); i++){
+			for(int j = (i+1); j < dice.size(); j++){
+				DieState die = dice.get(i);
+				DieState other = dice.get(j);
+				if(Math.sqrt(Math.pow(other.coord[0]-die.coord[0], 2)
+							 +Math.pow(other.coord[1]-die.coord[1], 2)) <
+					(Math.sqrt(3 * Math.pow(0.5, 2)))){
+					die.bounceAgainst(other);
+					die.move();
+					other.move();
+				}
+			}
+		}
 		for(DieState die : dice){
+			die.refreshTranslate();
 			die.move();
 	    
 		    Matrix.setIdentityM(tempMatrixA, 0);
 		    Matrix.setIdentityM(tempMatrixB, 0);
 		    
 			Matrix.setLookAtM(tempMatrixB, 0, 0, 0, 50, 0, 0, 0, 0, 1, 0);
-			
 			Matrix.multiplyMM(tempMatrixA, 0, die.rotation, 0, tempMatrixA, 0); // Rotate
 			Matrix.multiplyMM(tempMatrixA, 0, die.translation, 0, tempMatrixA, 0); // Translate
 			Matrix.multiplyMM(tempMatrixA, 0, tempMatrixB, 0, tempMatrixA, 0); // Look

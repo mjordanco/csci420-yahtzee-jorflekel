@@ -24,6 +24,7 @@ import com.jorflekel.yahtzee.Hands.Hand;
 import com.jorflekel.yahtzee.views.DiceHandView;
 import com.jorflekel.yahtzee.views.DieGLSurfaceView;
 import com.jorflekel.yahtzee.views.DiceHandView.HandChangeListener;
+import com.jorflekel.yahtzee.views.DieRenderer.DieState;
 import com.jorflekel.yahtzee.views.HelpDialog;
 import com.jorflekel.yahtzee.views.ProbabilityHelperView;
 
@@ -38,6 +39,8 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 	private int rollsSinceMove = 0;
 	private ScoreCard scoreCard;
 	private ProbabilityHelperView probabilityHelperView;
+	private DieGLSurfaceView dieGLSurfaceView;
+	private ArrayList<DieState> GLDice;
 	private boolean moved;
 
 	@Override
@@ -99,6 +102,9 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 		diceHandView = (DiceHandView) findViewById(R.id.diceHandView);
 		diceHandView.hideNumbers();
 		diceHandView.setHandChangeListener(this);
+		
+		dieGLSurfaceView = ((DieGLSurfaceView) findViewById(R.id.dieGLSurfaceView));
+		GLDice = dieGLSurfaceView.renderer.getDice();
 
 		probabilityHelperView = (ProbabilityHelperView) findViewById(R.id.probabilityHelperView);
 		
@@ -146,6 +152,10 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
     	  @Override
     	  public void run() {
     	    glview.renderer.endBounce();
+    	    for(int i = 0; i < diceHandView.getHand().length; i++){
+    	    	GLDice.get(i).requestFaceUp(diceHandView.getHand()[i]);
+    	    }
+	    	dieGLSurfaceView.requestRender();
     	  }
     	}, 1000);
 	}
