@@ -155,7 +155,6 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
     	    for(int i = 0; i < diceHandView.getHand().length; i++){
     	    	GLDice.get(i).requestFaceUp(diceHandView.getHand()[i]);
     	    }
-	    	dieGLSurfaceView.requestRender();
     	  }
     	}, 1000);
 	}

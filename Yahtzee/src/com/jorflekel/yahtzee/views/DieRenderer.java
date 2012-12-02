@@ -248,6 +248,11 @@ public class DieRenderer implements Renderer{
 			target.vel[0] = temp[0];
 			target.vel[1] = temp[1];
 		}
+		public void transAndUpdate(float dx, float dy, float dz){
+			coord[0] += dx;
+			coord[1] += dy;
+			translate(dx, dy, dz);
+		}
 		public void translate(float dx, float dy, float dz){
 			Matrix.translateM(translation, 0, dx, dy, dz);
 		}
@@ -320,9 +325,6 @@ public class DieRenderer implements Renderer{
 			}
 			return new float[] {0.0f, 0.0f, 0.0f, 1.0f};
 		}
-		private float rotateStep(){
-			return 0;
-		}
 	}
 	public void startBounce(){
 		Random r = new Random();
@@ -340,6 +342,8 @@ public class DieRenderer implements Renderer{
 		for(DieState die : dice){
 			die.vel[0] *= 0;
 			die.vel[1] *= 0;
+		}
+		for(DieState die : dice){
 			for(DieState other : dice){
 				if(die == other){
 					continue;
@@ -347,9 +351,9 @@ public class DieRenderer implements Renderer{
 				else{
 					if(Math.sqrt(Math.pow(other.coord[0]-die.coord[0], 2)+Math.pow(other.coord[1]-die.coord[1], 2)) 
 					   <
-					  (Math.sqrt(3 * Math.pow(0.5, 2)))
+					  2*(Math.sqrt(3 * Math.pow(0.5, 2)))
 					  ){
-					die.translate(die.coord[0]-other.coord[0], die.coord[1]-other.coord[1], 0);
+					die.transAndUpdate(die.coord[0]-other.coord[0], die.coord[1]-other.coord[1], 0);
 					}					
 				}
 			}
