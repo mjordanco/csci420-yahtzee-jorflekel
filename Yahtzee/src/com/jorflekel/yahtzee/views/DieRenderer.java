@@ -40,6 +40,7 @@ public class DieRenderer implements Renderer{
 	private int shaderDieTexSamplerU;
 	private int shaderModelViewProjMatrixU;
 	private int shaderRotMatrixU;
+	private int shaderLockedU;
 
 	// Pointer to the entire GL program
 	private int shaderProgramHandle;
@@ -74,12 +75,19 @@ public class DieRenderer implements Renderer{
 						"uniform vec4 color;" +
 						"uniform sampler2D tex;" +
 						"uniform float ambient;" +
+						"uniform int locked;" +
 						"varying float bright;" +
 						"varying vec2 vTexCoord;" +
 						"void main() {" +
 						"  float endBright = bright + ambient;" +
 						"  endBright = (endBright > 1.0 ? 1.0 : endBright);" +
 						"  gl_FragColor = texture2D(tex, vTexCoord) * endBright;" +
+						"  if(locked > 0){" +
+						"	gl_FragColor.y = gl_FragColor.x;" +
+						"   if(gl_FragColor.z < 0.9){" +
+						"    gl_FragColor.y *= 0.5;" +
+						"   }" +
+						"  }" +
 						"}";
 	
 	private static float vertCoords[] = { -0.5f,  0.5f,  0.5f,   
@@ -172,8 +180,9 @@ public class DieRenderer implements Renderer{
 	int transTracker = 0;
 	
 	// Defines the "playable" boundaries for the dice
-	float boundary = 3.0f;
+	float boundary = 13.0f;
 	float ratio = 1.0f;
+	float scale = 5.0f;
 	
 	// The current state of the cube/die
 	// TODO: Extend to multiple dice
@@ -184,7 +193,7 @@ public class DieRenderer implements Renderer{
 		Random r = new Random();
 		for(int i = 0; i < 5; i++){
 			DieState die = new DieState();
-			die.coord[0] = -boundary + i * (5.0f / boundary);
+			die.coord[0] = -boundary + i * (90.0f / boundary);
 			die.coord[1] = 0;
 			die.translate(die.coord[0], die.coord[1], 0);
 			dice.add(die);
@@ -201,7 +210,8 @@ public class DieRenderer implements Renderer{
 		public float translation[];
 		public float rotation[];
 		public float vel[];
-		private float coord[];
+		public boolean locked = false;
+		public float coord[];
 		private Interpolator currInterp;
 		private long currAnimStart;
 		private long currAnimDur;
@@ -220,7 +230,7 @@ public class DieRenderer implements Renderer{
 		// Moves and rotates the die according to its velocity.
 		// Prevents exiting the playing field.
 		public void move(){
-			float diag = (float) (Math.sqrt(0.5*0.5+0.5*0.5+0.5*0.5)*.9);
+			float diag = (float) (Math.sqrt(0.5*0.5+0.5*0.5+0.5*0.5)*.9) * scale;
 			if(coord[0] > boundary*ratio-diag || coord[0] < -boundary*ratio+diag){
 				coord[0] = (coord[0] >= boundary*ratio-diag ? boundary*ratio-diag : -boundary*ratio+diag);
 				vel[0] *= -1;
@@ -240,6 +250,14 @@ public class DieRenderer implements Renderer{
 		}
 		// Swaps velocities of the two dice
 		public void bounceAgainst(DieState target){
+			if(target.vel[0] < 0.1 && target.vel[1] < 0.1){
+				vel[0] *= -1;
+				vel[1] *= -1;
+				return;
+			}
+			if(vel[0] < 0.1 && vel[1] < 0.1){
+				return;
+			}
 			float temp[] = new float[2];
 			temp[0] = vel[0];
 			temp[1] = vel[1];
@@ -325,17 +343,22 @@ public class DieRenderer implements Renderer{
 			}
 			return new float[] {0.0f, 0.0f, 0.0f, 1.0f};
 		}
+		public void lockToggle() {
+			locked = !locked;
+		}
 	}
 	public void startBounce(){
 		Random r = new Random();
 		for(DieState die : dice){
-			double angle = (r.nextFloat()*2*Math.PI);
-			die.vel[0] = (float) (Math.cos(angle));
-			die.vel[1] = (float) (Math.sin(angle));
-			double speed = Math.sqrt(Math.pow(die.vel[0], 2)+Math.pow(die.vel[1], 2));
-			double scaleF = 0.25f / speed;
-			die.vel[0] *= scaleF;
-			die.vel[1] *= scaleF;
+			if(!die.locked){
+				double angle = (r.nextFloat()*2*Math.PI);
+				die.vel[0] = (float) (Math.cos(angle));
+				die.vel[1] = (float) (Math.sin(angle));
+				double speed = Math.sqrt(Math.pow(die.vel[0], 2)+Math.pow(die.vel[1], 2));
+				double scaleF = 1.25f / speed;
+				die.vel[0] *= scaleF;
+				die.vel[1] *= scaleF;
+			}
 		}
 	}
 	public void endBounce(){
@@ -351,7 +374,7 @@ public class DieRenderer implements Renderer{
 				else{
 					if(Math.sqrt(Math.pow(other.coord[0]-die.coord[0], 2)+Math.pow(other.coord[1]-die.coord[1], 2)) 
 					   <
-					  2*(Math.sqrt(3 * Math.pow(0.5, 2)))
+					  2*(Math.sqrt(3 * Math.pow(0.5, 2)) * scale)
 					  ){
 					die.transAndUpdate(die.coord[0]-other.coord[0], die.coord[1]-other.coord[1], 0);
 					}					
@@ -400,6 +423,7 @@ public class DieRenderer implements Renderer{
 		shaderColorU = GLES20.glGetUniformLocation(shaderProgramHandle, "color");
 		shaderLightPosU = GLES20.glGetUniformLocation(shaderProgramHandle, "lightPos");
 		shaderAmbientU = GLES20.glGetUniformLocation(shaderProgramHandle, "ambient");
+		shaderLockedU = GLES20.glGetUniformLocation(shaderProgramHandle, "locked");
 		shaderModelViewProjMatrixU = GLES20.glGetUniformLocation(shaderProgramHandle, "uModViewProjMatrix");
 		shaderRotMatrixU = GLES20.glGetUniformLocation(shaderProgramHandle, "uRotMatrix");
 		shaderDieTexSamplerU = GLES20.glGetUniformLocation(shaderProgramHandle, "tex");
@@ -459,7 +483,7 @@ public class DieRenderer implements Renderer{
 		GLES20.glViewport(0, 0, width, height);
 		ratio = (float)width / height;
 		float units = boundary;
-		Matrix.frustumM(projMatrix, 0, -ratio*units, ratio*units, -units, units, 49, 51);
+		Matrix.frustumM(projMatrix, 0, -ratio*units, ratio*units, -units, units, 246, 254);
 	}
 
 	@Override
@@ -521,7 +545,7 @@ public class DieRenderer implements Renderer{
 				DieState other = dice.get(j);
 				if(Math.sqrt(Math.pow(other.coord[0]-die.coord[0], 2)
 							 +Math.pow(other.coord[1]-die.coord[1], 2)) <
-					(Math.sqrt(3 * Math.pow(0.5, 2)))){
+					(Math.sqrt(3 * Math.pow(0.5, 2))) * scale){
 					die.bounceAgainst(other);
 					die.move();
 					other.move();
@@ -531,11 +555,14 @@ public class DieRenderer implements Renderer{
 		for(DieState die : dice){
 			die.refreshTranslate();
 			die.move();
+			
+			GLES20.glUniform1i(shaderLockedU, (die.locked? 1 : 0));
 	    
 		    Matrix.setIdentityM(tempMatrixA, 0);
 		    Matrix.setIdentityM(tempMatrixB, 0);
 		    
-			Matrix.setLookAtM(tempMatrixB, 0, 0, 0, 50, 0, 0, 0, 0, 1, 0);
+			Matrix.setLookAtM(tempMatrixB, 0, 0, 0, 250, 0, 0, 0, 0, 1, 0);
+			Matrix.scaleM(tempMatrixA, 0, 5, 5, 5);
 			Matrix.multiplyMM(tempMatrixA, 0, die.rotation, 0, tempMatrixA, 0); // Rotate
 			Matrix.multiplyMM(tempMatrixA, 0, die.translation, 0, tempMatrixA, 0); // Translate
 			Matrix.multiplyMM(tempMatrixA, 0, tempMatrixB, 0, tempMatrixA, 0); // Look
