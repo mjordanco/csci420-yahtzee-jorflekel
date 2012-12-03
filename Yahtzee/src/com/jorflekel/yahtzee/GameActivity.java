@@ -145,6 +145,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
     		if(tv.getTag(R.id.scoreId) == null && tv != bonus)
     			tv.setText("" + ((Hand)tv.getTag(R.id.handId)).score(hand));
     	}
+    	/*
     	final DieGLSurfaceView glview = (DieGLSurfaceView) findViewById(R.id.dieGLSurfaceView);
     	glview.renderer.startBounce();
     	final Handler handler = new Handler();
@@ -157,6 +158,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
     	    }
     	  }
     	}, 1000);
+    	*/
 	}
 
 	public void clearEmptyScores() {
