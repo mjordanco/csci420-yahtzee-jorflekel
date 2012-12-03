@@ -120,6 +120,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 	private void roll() {
 		moved = false;
 		hand = diceHandView.roll();
+		probabilityHelperView.setRollsRemaining(3 - rollsSinceMove);
 	}
 
 	public void onShakeClick(View v) {
@@ -198,6 +199,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 						.show();
 			}
 		}
+		probabilityHelperView.setMaxScore(scoreCard.calcBestPossible());
 	}
 
 	public void onLabelClick(View v) {

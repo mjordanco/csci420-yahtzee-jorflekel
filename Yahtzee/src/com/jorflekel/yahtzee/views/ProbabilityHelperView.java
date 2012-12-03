@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -25,6 +26,10 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 	private HandPicker handPicker;
 	private TextView[] probBoxes;
 	private ProbHelper probHelper;
+	private TextView rollsRemainingText;
+	private int rollsRemaining;
+
+	private TextView maxScore;
 	
 	public ProbabilityHelperView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -36,8 +41,12 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 		for(int i = 0; i < ids.length; i++) {
 			probBoxes[i] = (TextView) findViewById(ids[i]);
 		}
-		
+		rollsRemainingText = (TextView) findViewById(R.id.rollsRemaining);
+		rollsRemainingText.setOnClickListener(onRollsClick);
 		probHelper = ProbHelper.instance();
+		setRollsRemaining(3);
+		
+		maxScore = (TextView) findViewById(R.id.maxScore);
 	}
 	
 	public void setHand(int[] hand) {
@@ -79,22 +88,22 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 		}
 		Log.e("PROB_HELPER_VIEW", "calc prob rolling " + (5-sum) + " dice with hand:" + handstring);
 		
-		double trips = probHelper.probOfComb(3, probHand, 5 - sum, 3);
+		double trips = probHelper.probOfComb(3, probHand, 5 - sum, rollsRemaining);
 		probBoxes[0].setText("" + toPercent(trips));
 		
-		double quads = probHelper.probOfComb(4, probHand, 5 - sum, 3);
+		double quads = probHelper.probOfComb(4, probHand, 5 - sum, rollsRemaining);
 		probBoxes[1].setText("" + toPercent(quads));
 		
-		double full = probHelper.probOfComb(ProbHelper.HOUSE, probHand, 5 - sum, 3);
+		double full = probHelper.probOfComb(ProbHelper.HOUSE, probHand, 5 - sum, rollsRemaining);
 		probBoxes[2].setText("" + toPercent(full));
 		
-		double small = probHelper.probOfComb(ProbHelper.SM_STRAIGHT, probHand, 5 - sum, 3);
+		double small = probHelper.probOfComb(ProbHelper.SM_STRAIGHT, probHand, 5 - sum, rollsRemaining);
 		probBoxes[3].setText("" + toPercent(small));
 		
-		double large = probHelper.probOfComb(ProbHelper.LG_STRAIGHT, probHand, 5 - sum, 3);
+		double large = probHelper.probOfComb(ProbHelper.LG_STRAIGHT, probHand, 5 - sum, rollsRemaining);
 		probBoxes[4].setText("" + toPercent(large));
 		
-		double yahtz = probHelper.probOfComb(5, probHand, 5 - sum, 3);
+		double yahtz = probHelper.probOfComb(5, probHand, 5 - sum, rollsRemaining);
 		probBoxes[5].setText("" + toPercent(yahtz));
 	}
 	
@@ -103,5 +112,28 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 		double percentValue = percent / 100.0;
 		return "" + percentValue + "%";
 	}
+
+	public int getRollsRemaining() {
+		return rollsRemaining;
+	}
+
+	public void setRollsRemaining(int rollsRemaining) {
+		if(rollsRemaining == 0) return;
+		this.rollsRemaining = rollsRemaining;
+		rollsRemainingText.setText("" + rollsRemaining);
+		updateProbs();
+	}
+	
+	public void setMaxScore(int maxScore) {
+		this.maxScore.setText("" + maxScore);
+	}
+	
+	private final OnClickListener onRollsClick = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			setRollsRemaining(rollsRemaining > 1 ? rollsRemaining - 1 : 3);
+		}
+	};
 	
 }
