@@ -97,12 +97,12 @@ public class ProbHelper {
 	}
 	
 	public double probOfComb( int comb, int[] hand, int numDiceToRoll, int numTimesToRoll) {
-
+		//if(comb == SM_STRAIGHT || comb == LG_STRAIGHT || comb == HOUSE || comb == 1234 || comb == 12345 || comb == 22333) Log.e("PROB_HELPER", "calcing prob for straight or house");
 		if(hand == null) 
 			hand = new int[0];
-		
-		if((numDiceToRoll + hand.length) < comb) return 0;
-		
+		if(!(comb == SM_STRAIGHT || comb == LG_STRAIGHT || comb == HOUSE)) {
+			if((numDiceToRoll + hand.length) < comb) return 0;
+		}
 		double numComb = Math.pow(6,numDiceToRoll);
 		int totDice = hand.length + numDiceToRoll;
 		
@@ -116,7 +116,7 @@ public class ProbHelper {
 		default: diceSet = new int[0][0];break;
 		}
 		if((hand.length+numDiceToRoll) > 5){
-			System.out.println("hand and num dice to roll exceed 5: " + hand.length + ", " + numDiceToRoll);
+			Log.e("PROB_HELPER", "hand and num dice to roll exceed 5: " + hand.length + ", " + numDiceToRoll);
 			return -1;
 		}
 		int validHands = 0;
@@ -131,17 +131,15 @@ public class ProbHelper {
 			}
 			if(containsComb(comb, results[i])) {
 				validHands++;
-				/*
-				System.out.print("found it at: ");
-				for(int j = 0; j < results[i].length; j++) {
-					System.out.print(results[i][j]);
-				}
-				System.out.println("");
-				*/
 			}
 		}
-		
+
 		double result = (double) validHands/numComb;
+		String handstring = "";
+		for(int j = 0; j < hand.length; j++) {
+			handstring += " " + hand[j];
+		}
+		//Log.e("PROB_HELPER", "Found " + result + " prob for hand " + handstring + " and comb: " + comb);
 		for(int i = 1; i < numTimesToRoll; i++) {
 			
 			result = result + (1.0 - result) * result;
@@ -150,6 +148,7 @@ public class ProbHelper {
 		return result;
 	}
 	public boolean containsComb(int comb, int[] hand) {
+		//if(comb == SM_STRAIGHT || comb == LG_STRAIGHT || comb == HOUSE || comb == 1234 || comb == 12345 || comb == 22333) Log.e("PROB_HELPER", "DETECTING prob for straight or house");
 		int[] set = hand.clone();
 		boolean result = false;
 		boolean innerResult = true;
@@ -157,6 +156,28 @@ public class ProbHelper {
 		if(comb == SM_STRAIGHT || comb == LG_STRAIGHT) {
 			if(set.length < 4) return false;
 			int comLength = (comb == SM_STRAIGHT ? 3 : 4);
+			//remove double for small straight
+			int[] newSet; int numDub = 0;
+			if(comb == SM_STRAIGHT && containsComb(2,set)) {
+				for(int i = 0; i < (set.length-1); i++) {
+					if(set[i]==set[i+1]) {
+						numDub++;
+					}
+				}
+				newSet = new int[set.length-numDub];
+				int prevAdded = -1;
+				int index = 0;
+				for(int i = 0; i < (set.length); i++) {
+					
+					if(set[i] != prevAdded) {
+						newSet[index]=set[i];
+						index++;
+						prevAdded = set[i];
+					}
+				}
+				set = newSet;
+				if(set.length < 4) return false;
+			}
 			
 			for(int i = 0; i < (set.length-comLength); i++) {
 				for(int j = i; j < (i+comLength); j++) {

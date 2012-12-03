@@ -69,12 +69,15 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 		}
 		int[] probHand = new int[sum];
 		int index = 0;
+		String handstring = "";
 		for(int i = 0; i < held.length; i++) {
 			if(held[i]) {
 				probHand[index] = hand[i];
+				handstring += " " + hand[i];
 				index++;
 			}
 		}
+		Log.e("PROB_HELPER_VIEW", "calc prob rolling " + (5-sum) + " dice with hand:" + handstring);
 		
 		double trips = probHelper.probOfComb(3, probHand, 5 - sum, 3);
 		probBoxes[0].setText("" + toPercent(trips));
