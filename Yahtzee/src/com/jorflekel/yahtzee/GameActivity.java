@@ -22,8 +22,9 @@ import android.widget.TextView;
 
 import com.jorflekel.yahtzee.Hands.Hand;
 import com.jorflekel.yahtzee.views.DiceHandView;
-import com.jorflekel.yahtzee.views.DieGLSurfaceView;
 import com.jorflekel.yahtzee.views.DiceHandView.HandChangeListener;
+import com.jorflekel.yahtzee.views.DieGLSurfaceView;
+import com.jorflekel.yahtzee.views.DieRenderer;
 import com.jorflekel.yahtzee.views.DieRenderer.DieState;
 import com.jorflekel.yahtzee.views.HelpDialog;
 import com.jorflekel.yahtzee.views.ProbabilityHelperView;
@@ -40,6 +41,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 	private ScoreCard scoreCard;
 	private ProbabilityHelperView probabilityHelperView;
 	private DieGLSurfaceView dieGLSurfaceView;
+	private DieRenderer dieRenderer;
 	private ArrayList<DieState> GLDice;
 	private boolean moved;
 
@@ -104,7 +106,11 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 		diceHandView.setHandChangeListener(this);
 		
 		dieGLSurfaceView = ((DieGLSurfaceView) findViewById(R.id.dieGLSurfaceView));
+		dieRenderer = dieGLSurfaceView.renderer;
+		dieRenderer.diceHandView = diceHandView;
 		GLDice = dieGLSurfaceView.renderer.getDice();
+		
+		diceHandView.GLdice = dieRenderer.getDice();
 
 		probabilityHelperView = (ProbabilityHelperView) findViewById(R.id.probabilityHelperView);
 		

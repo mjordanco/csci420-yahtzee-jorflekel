@@ -51,6 +51,7 @@ public class DieGLSurfaceView extends GLSurfaceView {
 			}
 			if(closest != null){
 				closest.lockToggle();
+				renderer.diceHandView.toggleHeld(renderer.dice.indexOf(closest));
 			}
 			return true;
 		}

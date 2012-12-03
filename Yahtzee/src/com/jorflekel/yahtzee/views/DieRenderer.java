@@ -28,6 +28,9 @@ public class DieRenderer implements Renderer{
 	// In case we ever need a context
 	private Context hostContext;
 	
+	// For locking the hand/dice
+	public DiceHandView diceHandView;
+	
 	// Attribute GLpointers
 	private int shaderPositionA;
 	private int shaderNormalA;

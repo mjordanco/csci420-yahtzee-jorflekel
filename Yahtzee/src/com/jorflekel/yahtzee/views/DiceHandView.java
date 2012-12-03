@@ -1,18 +1,17 @@
 package com.jorflekel.yahtzee.views;
 
+import java.util.ArrayList;
+
 import android.content.Context;
-import android.text.Layout;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.jorflekel.yahtzee.ProbHelper;
 import com.jorflekel.yahtzee.R;
+import com.jorflekel.yahtzee.views.DieRenderer.DieState;
 
 public class DiceHandView extends FrameLayout implements OnCheckedChangeListener{
 
@@ -20,25 +19,26 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		public void onHeldChanged(boolean[] held);
 		public void onHandChanged(int[] hand);
 	}
-	
+
 	int[] ids = new int[] {
-		R.id.die1,
-		R.id.die2,
-		R.id.die3,
-		R.id.die4,
-		R.id.die5
+			R.id.die1,
+			R.id.die2,
+			R.id.die3,
+			R.id.die4,
+			R.id.die5
 	};
-	
+
 	ToggleButton[] dice;
+	public static ArrayList<DieState> GLdice;
 
 	private int[] hand;
 	private HandChangeListener handChangeListener;
 	private boolean hideNotHeld;
-	
+
 	public DiceHandView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		LayoutInflater.from(context).inflate(R.layout.dice_hand_view, this);
-		
+
 		dice = new ToggleButton[5];
 		for(int i = 0; i < 5; i++) {
 			dice[i] = (ToggleButton) findViewById(ids[i]);
@@ -48,13 +48,13 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		hand = new int[] {1,1,1,1,1};
 		setHand();
 	}
-	
+
 	public void toggleOff() {
 		for(ToggleButton button : dice) {
 			button.setChecked(false);
 		}
 	}
-	
+
 	public void setHand() {
 		for(int i = 0; i < 5; i++) {
 			if(dice[i].isChecked() || !isHideNotHeld()) {
@@ -69,7 +69,7 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		}
 		if(handChangeListener != null) handChangeListener.onHandChanged(hand);
 	}
-	
+
 	public void setHand(int[] hand) {
 		this.hand = hand;
 		setHand();
@@ -82,11 +82,11 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 				hand[i] = (int) (Math.random() * 6 + 1);
 			} else {
 			}
-    	}
-    	setHand();
+		}
+		setHand();
 		return hand;
 	}
-	
+
 	public void hideNumbers() {
 		for(ToggleButton button : dice) {
 			button.setText("");
@@ -100,7 +100,7 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		hand[i] = hand[i] < 6 ? hand[i] + 1 : 1; 
 		setHand();
 	}
-	
+
 	public void decrementDieValue(int i) {
 		hand[i] = hand[i] > 1 ? hand[i] - 1 : 6; 
 		setHand();
@@ -109,7 +109,12 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 	public void setHeld(boolean[] held) {
 		for(int i = 0; i < held.length; i++) {
 			dice[i].setChecked(held[i]);
+			GLdice.get(i).locked = held[i];
 		}
+	}
+
+	public void toggleHeld(int index) {
+		dice[index].setChecked(!dice[index].isChecked());
 	}
 
 	public void setHandChangeListener(HandChangeListener handChangeListener) {
@@ -128,7 +133,7 @@ public class DiceHandView extends FrameLayout implements OnCheckedChangeListener
 		}
 		setHand();
 	}
-	
+
 	public boolean[] getHeld() {
 		boolean[] held = new boolean[5];
 		for(int i = 0; i < 5; i++) {
