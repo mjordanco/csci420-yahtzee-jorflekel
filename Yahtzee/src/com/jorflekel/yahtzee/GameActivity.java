@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 
 import com.jorflekel.yahtzee.Hands.Hand;
@@ -104,6 +105,9 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 		diceHandView.setHandChangeListener(this);
 
 		probabilityHelperView = (ProbabilityHelperView) findViewById(R.id.probabilityHelperView);
+		SlidingDrawer drawer = (SlidingDrawer) findViewById(R.id.drawer);
+		drawer.setOnDrawerCloseListener(probabilityHelperView);
+		drawer.setOnDrawerOpenListener(probabilityHelperView);
 		
 		rollsLabel = (TextView) findViewById(R.id.rollsLabel);
 

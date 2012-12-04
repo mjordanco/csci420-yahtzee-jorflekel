@@ -63,19 +63,20 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 
 	@Override
 	public void onHandChanged(int[] hand) {
-		//if(isOpen) 
+		if(isOpen) 
 			updateProbs();
 	}
 
 	@Override
 	public void onHeldChanged(boolean[] held) {
-		//if(isOpen) 
+		if(isOpen) 
 			updateProbs();
 		//Log.d("ProbabilityHelper", "Held Changed");
 	}
 	@Override
 	public void onDrawerOpened() {
 		updateProbs();
+		Log.e("PROBHELPER", "drawer was opened");
 		isOpen=true;
 	}
 	@Override
