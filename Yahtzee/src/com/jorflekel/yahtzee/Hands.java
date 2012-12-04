@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.jorflekel.yahtzee.R;
+
 public class Hands {
 
 	public interface Hand {

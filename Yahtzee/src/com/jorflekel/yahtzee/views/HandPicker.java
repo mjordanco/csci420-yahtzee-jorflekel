@@ -8,8 +8,8 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.jorflekel.yahtzee.R;
 import com.jorflekel.yahtzee.views.DiceHandView.HandChangeListener;
+import com.jorflekel.yahtzee.R;
 
 public class HandPicker extends LinearLayout implements HandChangeListener{
 
