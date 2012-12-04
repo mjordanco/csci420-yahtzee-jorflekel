@@ -132,10 +132,11 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 	private void roll() {
 		moved = false;
 		hand = diceHandView.roll();
+		probabilityHelperView.setRollsRemaining(3 - rollsSinceMove);
 	}
 
 	public void onShakeClick(View v) {
-		if (rollsSinceMove < 3) {
+		if (rollsSinceMove < 3 && !scoreCard.isDone()) {
 			startTurn();
 			shakeTime = System.currentTimeMillis();
 		}
@@ -186,16 +187,21 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 			rollsLabel.setText("3");
 			scoreCard.setScore(((Hand) v.getTag(R.id.handId)).getName(),
 					((Hand) v.getTag(R.id.handId)).score(hand));
-			int upperScore = scoreCard.getUpperScore();
-			Log.d("GameActivity", "" + upperScore);
+			//Log.d("GameActivity", "" + upperScore);
 			if (scoreCard.getUpperScore() >= 63) {
 				bonus.setText("35");
 				bonus.setTextColor(Color.parseColor("#254117"));
 				bonus.setTag(35);
 				scoreCard.setScore("bonus", 35);
 			} else {
-				((TextView) findViewById(R.id.upperBonusScore)).setText(""
-						+ (63 - scoreCard.getUpperScore()) + " more");
+				if(scoreCard.isUpperSectionDone()) {
+					((TextView) findViewById(R.id.upperBonusScore)).setText("0");
+					scoreCard.setScore("bonus", 0);
+					bonus.setTag(0);
+				} else {
+					((TextView) findViewById(R.id.upperBonusScore)).setText(""
+							+ (63 - scoreCard.getUpperScore()) + " more");
+				}
 			}
 			clearEmptyScores();
 			if (scoreCard.isUpperSectionDone() && bonus.getTag() == null) {
@@ -211,6 +217,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 						.show();
 			}
 		}
+		probabilityHelperView.setMaxScore(scoreCard.calcBestPossible());
 	}
 
 	public void onLabelClick(View v) {

@@ -11,7 +11,8 @@ public class ProbHelper {
 	public static int HOUSE = 22333;
 	
 	private static ProbHelper singleton = null;
-	private int[][] oneComb, twoComb, threeComb, fourComb, fiveComb;
+	private int[][] oneComb, twoComb, threeComb, fourComb, fiveComb, results, diceSet;
+	private int[] set;
 	
 	public static ProbHelper instance() {
 		System.out.println("Instancing...");
@@ -59,9 +60,207 @@ public class ProbHelper {
 				}
 			}	
 		}
-		
+		//since this is yahtzee, results can always be int[7776][5]
+		results = new int[7776][5];
+		set = new int[5];
 	}
 	
+	public double[] probOfAllComb(int[] hand, int numDiceToRoll, int numTimesToRoll) {
+		if(hand == null) 
+			hand = new int[0];
+
+		double numComb = Math.pow(6,numDiceToRoll);
+		int totDice = hand.length + numDiceToRoll;
+		
+		//int[][] diceSet;
+		switch(numDiceToRoll) {
+		case 1: diceSet = oneComb;break;
+		case 2: diceSet = twoComb;break;
+		case 3: diceSet = threeComb;break;
+		case 4: diceSet = fourComb;break;
+		case 5: diceSet = fiveComb;break;
+		default: diceSet = new int[0][0];break;
+		}
+		/*valid hands indecies: 0-trip
+								1-quad
+								2-full house
+								3-small straight
+								4-large straight
+								5-yahtzee
+		*/
+		int[] validHands = {0,0,0,0,0,0};
+		//int[][] results = new int[(int)numComb][totDice];
+		
+		for(int i = 0; i < numComb; i++) {
+			for(int j = 0; j < numDiceToRoll; j++) {
+				results[i][j] = diceSet[i][j];
+			}
+			for(int j = 0; j < hand.length; j++) {
+				results[i][totDice-j-1] = hand[j];
+			}
+			if(containsComb(3, results[i])) {
+				validHands[0]++;
+			}
+			if(containsComb(4, results[i])) {
+				validHands[1]++;
+			}
+			if(containsComb(HOUSE, results[i])) {
+				validHands[2]++;
+			}
+			if(containsComb(SM_STRAIGHT, results[i])) {
+				validHands[3]++;
+			}
+			if(containsComb(LG_STRAIGHT, results[i])) {
+				validHands[4]++;
+			}
+			if(containsComb(5, results[i])) {
+				validHands[5]++;
+			}
+		}
+		double[] result = new double[6];
+		for(int i = 0; i < validHands.length; i++){
+			result[i] = (double) validHands[i]/numComb;
+		}
+		/*String handstring = "";
+		for(int j = 0; j < hand.length; j++) {
+			handstring += " " + hand[j];
+		}*/
+		//Log.e("PROB_HELPER", "Found " + result + " prob for hand " + handstring + " and comb: " + comb);
+		for(int i = 1; i < numTimesToRoll; i++) {
+			for(int j = 0; j < result.length; j++){
+				result[j] = result[j] + (1.0 - result[j]) * result[j];
+			}
+		}
+		
+		return result;
+	}
+	
+	public double probOfComb( int comb, int[] hand, int numDiceToRoll, int numTimesToRoll) {
+		//if(comb == SM_STRAIGHT || comb == LG_STRAIGHT || comb == HOUSE || comb == 1234 || comb == 12345 || comb == 22333) Log.e("PROB_HELPER", "calcing prob for straight or house");
+		if(hand == null) 
+			hand = new int[0];
+		if(!(comb == SM_STRAIGHT || comb == LG_STRAIGHT || comb == HOUSE)) {
+			if((numDiceToRoll + hand.length) < comb) return 0;
+		}
+		double numComb = Math.pow(6,numDiceToRoll);
+		int totDice = hand.length + numDiceToRoll;
+		
+		//int[][] diceSet;
+		switch(numDiceToRoll) {
+		case 1: diceSet = oneComb;break;
+		case 2: diceSet = twoComb;break;
+		case 3: diceSet = threeComb;break;
+		case 4: diceSet = fourComb;break;
+		case 5: diceSet = fiveComb;break;
+		default: diceSet = new int[0][0];break;
+		}
+		if((hand.length+numDiceToRoll) > 5){
+			Log.e("PROB_HELPER", "hand and num dice to roll exceed 5: " + hand.length + ", " + numDiceToRoll);
+			return -1;
+		}
+		int validHands = 0;
+		//int[][] results = new int[(int)numComb][totDice];
+		
+		for(int i = 0; i < numComb; i++) {
+			for(int j = 0; j < numDiceToRoll; j++) {
+				results[i][j] = diceSet[i][j];
+			}
+			for(int j = 0; j < hand.length; j++) {
+				results[i][totDice-j-1] = hand[j];
+			}
+			if(containsComb(comb, results[i])) {
+				validHands++;
+			}
+		}
+
+		double result = (double) validHands/numComb;
+		/*String handstring = "";
+		for(int j = 0; j < hand.length; j++) {
+			handstring += " " + hand[j];
+		}*/
+		//Log.e("PROB_HELPER", "Found " + result + " prob for hand " + handstring + " and comb: " + comb);
+		for(int i = 1; i < numTimesToRoll; i++) {
+			
+			result = result + (1.0 - result) * result;
+		}
+		
+		return result;
+	}
+	public boolean containsComb(int comb, int[] hand) {
+		//if(comb == SM_STRAIGHT || comb == LG_STRAIGHT || comb == HOUSE || comb == 1234 || comb == 12345 || comb == 22333) Log.e("PROB_HELPER", "DETECTING prob for straight or house");
+		int[] set = hand.clone();
+		/*
+		int count;
+		for(count = 0; count < hand.length; count++) {
+			set[count]=hand[count];
+		}
+		for(count = count; count < set.length; count++) {
+			set[count] = count*1000;
+		}
+		*/
+		boolean result = false;
+		boolean innerResult = true;
+		Arrays.sort(set);
+		if(comb == SM_STRAIGHT || comb == LG_STRAIGHT) {
+			if(hand.length < 4 || containsComb(3, set)) return false;
+			if(comb == LG_STRAIGHT && containsComb(2, set)) return false;
+			int comLength = (comb == SM_STRAIGHT ? 3 : 4);
+			
+			
+			//remove double for small straight
+			int[] newSet; int numDub = 0;
+			if(comb == SM_STRAIGHT && containsComb(2,set)) {
+				for(int i = 0; i < (hand.length-1); i++) {
+					if(set[i]==set[i+1]) {
+						numDub++;
+					}
+				}
+				if(numDub > 1) return false;
+				newSet = new int[hand.length-numDub];
+				int prevAdded = -1;
+				int index = 0;
+				for(int i = 0; i < (hand.length); i++) {
+					
+					if(set[i] != prevAdded) {
+						newSet[index]=set[i];
+						index++;
+						prevAdded = set[i];
+					}
+				}
+				set = newSet;
+				if(set.length < 4) return false;
+			}
+			if(set.length < 4) return false;
+			for(int i = 0; i < (set.length-comLength); i++) {
+				for(int j = i; j < (i+comLength); j++) {
+					//if(set[j]!=set[j+1]){
+						innerResult = innerResult && (set[j]==(set[j+1]-1) );
+					//}
+				}
+				result = result || innerResult;
+				innerResult = true;
+			}
+		}else if( comb == HOUSE) {
+			if(hand.length < 5) return false;
+			boolean firstTwo = containsComb(2, new int[] {set[0], set[1]});
+			boolean lastTwo = containsComb(2, new int[] {set[3], set[4]});
+			boolean firstThree = containsComb(3, new int[] {set[0], set[1], set[2]});
+			boolean lastThree = containsComb(3, new int[] {set[2], set[3], set[4]});
+			
+			return ((firstTwo && lastThree) || (firstThree && lastTwo));
+		} else {
+			if(hand.length < comb) return false;
+			for(int i = 0; i < (hand.length-comb+1); i++) {
+				for(int j = i; j < (i+(comb-1)); j++) {
+					innerResult = innerResult && (set[j]==set[j+1] );
+				}
+				result = result || innerResult;
+				innerResult = true;
+			}
+		}
+		return result;
+	}
+
 	public double probOfDoubleJackStyle( int[] hand, int numDiceToRoll, int numTimesToRoll) {
 		
 		int numUnique = 0;
@@ -95,117 +294,5 @@ public class ProbHelper {
 		
 		return result;
 	}
-	
-	public double probOfComb( int comb, int[] hand, int numDiceToRoll, int numTimesToRoll) {
-		//if(comb == SM_STRAIGHT || comb == LG_STRAIGHT || comb == HOUSE || comb == 1234 || comb == 12345 || comb == 22333) Log.e("PROB_HELPER", "calcing prob for straight or house");
-		if(hand == null) 
-			hand = new int[0];
-		if(!(comb == SM_STRAIGHT || comb == LG_STRAIGHT || comb == HOUSE)) {
-			if((numDiceToRoll + hand.length) < comb) return 0;
-		}
-		double numComb = Math.pow(6,numDiceToRoll);
-		int totDice = hand.length + numDiceToRoll;
-		
-		int[][] diceSet;
-		switch(numDiceToRoll) {
-		case 1: diceSet = oneComb;break;
-		case 2: diceSet = twoComb;break;
-		case 3: diceSet = threeComb;break;
-		case 4: diceSet = fourComb;break;
-		case 5: diceSet = fiveComb;break;
-		default: diceSet = new int[0][0];break;
-		}
-		if((hand.length+numDiceToRoll) > 5){
-			Log.e("PROB_HELPER", "hand and num dice to roll exceed 5: " + hand.length + ", " + numDiceToRoll);
-			return -1;
-		}
-		int validHands = 0;
-		int[][] results = new int[(int)numComb][totDice];
-		
-		for(int i = 0; i < numComb; i++) {
-			for(int j = 0; j < numDiceToRoll; j++) {
-				results[i][j] = diceSet[i][j];
-			}
-			for(int j = 0; j < hand.length; j++) {
-				results[i][totDice-j-1] = hand[j];
-			}
-			if(containsComb(comb, results[i])) {
-				validHands++;
-			}
-		}
-
-		double result = (double) validHands/numComb;
-		String handstring = "";
-		for(int j = 0; j < hand.length; j++) {
-			handstring += " " + hand[j];
-		}
-		//Log.e("PROB_HELPER", "Found " + result + " prob for hand " + handstring + " and comb: " + comb);
-		for(int i = 1; i < numTimesToRoll; i++) {
-			
-			result = result + (1.0 - result) * result;
-		}
-		
-		return result;
-	}
-	public boolean containsComb(int comb, int[] hand) {
-		//if(comb == SM_STRAIGHT || comb == LG_STRAIGHT || comb == HOUSE || comb == 1234 || comb == 12345 || comb == 22333) Log.e("PROB_HELPER", "DETECTING prob for straight or house");
-		int[] set = hand.clone();
-		boolean result = false;
-		boolean innerResult = true;
-		Arrays.sort(set);
-		if(comb == SM_STRAIGHT || comb == LG_STRAIGHT) {
-			if(set.length < 4) return false;
-			int comLength = (comb == SM_STRAIGHT ? 3 : 4);
-			//remove double for small straight
-			int[] newSet; int numDub = 0;
-			if(comb == SM_STRAIGHT && containsComb(2,set)) {
-				for(int i = 0; i < (set.length-1); i++) {
-					if(set[i]==set[i+1]) {
-						numDub++;
-					}
-				}
-				newSet = new int[set.length-numDub];
-				int prevAdded = -1;
-				int index = 0;
-				for(int i = 0; i < (set.length); i++) {
-					
-					if(set[i] != prevAdded) {
-						newSet[index]=set[i];
-						index++;
-						prevAdded = set[i];
-					}
-				}
-				set = newSet;
-				if(set.length < 4) return false;
-			}
-			
-			for(int i = 0; i < (set.length-comLength); i++) {
-				for(int j = i; j < (i+comLength); j++) {
-					innerResult = innerResult && (set[j]==(set[j+1]-1) );
-				}
-				result = result || innerResult;
-				innerResult = true;
-			}
-		}else if( comb == HOUSE) {
-			if(set.length < 5) return false;
-			boolean firstTwo = containsComb(2, new int[] {set[0], set[1]});
-			boolean lastTwo = containsComb(2, new int[] {set[3], set[4]});
-			boolean firstThree = containsComb(3, new int[] {set[0], set[1], set[2]});
-			boolean lastThree = containsComb(3, new int[] {set[2], set[3], set[4]});
-			
-			return ((firstTwo && lastThree) || (firstThree && lastTwo));
-		} else {
-			if(set.length < comb) return false;
-			for(int i = 0; i < (set.length-comb+1); i++) {
-				for(int j = i; j < (i+(comb-1)); j++) {
-					innerResult = innerResult && (set[j]==set[j+1] );
-				}
-				result = result || innerResult;
-				innerResult = true;
-			}
-		}
-		return result;
-	}
-
 }
 
