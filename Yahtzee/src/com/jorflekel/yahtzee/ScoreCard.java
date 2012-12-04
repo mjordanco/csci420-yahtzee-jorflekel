@@ -96,8 +96,8 @@ public class ScoreCard {
 		for (String s : UPPER_SECTION) {
 			if (getScore(s) != -1)
 				sum += getScore(s);
-			else
-				Log.d("ScoreCard", "Does not contain score for key " + s);
+			//else
+				//Log.d("ScoreCard", "Does not contain score for key " + s);
 		}
 		return sum;
 	}
@@ -115,8 +115,8 @@ public class ScoreCard {
 		for (String s : SECTIONS) {
 			if (getScore(s) != -1)
 				sum += getScore(s);
-			else
-				Log.d("ScoreCard", "Does not contain score for key " + s);
+			//else
+				//Log.d("ScoreCard", "Does not contain score for key " + s);
 		}
 		return sum;
 	}

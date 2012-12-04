@@ -87,10 +87,12 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 			}
 		}
 		//Log.e("PROB_HELPER_VIEW", "calc prob rolling " + (5-sum) + " dice with hand:" + handstring);
+		
 		double[] probs = probHelper.probOfAllComb(probHand, 5-sum, rollsRemaining);
 		for(int i = 0; i < 6; i++) {
 			probBoxes[i].setText("" + toPercent(probs[i]));
 		}
+		
 		/*
 		double trips = probHelper.probOfComb(3, probHand, 5 - sum, rollsRemaining);
 		probBoxes[0].setText("" + toPercent(trips));

@@ -174,7 +174,6 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 			rollsLabel.setText("3");
 			scoreCard.setScore(((Hand) v.getTag(R.id.handId)).getName(),
 					((Hand) v.getTag(R.id.handId)).score(hand));
-			int upperScore = scoreCard.getUpperScore();
 			//Log.d("GameActivity", "" + upperScore);
 			if (scoreCard.getUpperScore() >= 63) {
 				bonus.setText("35");
