@@ -135,10 +135,10 @@ public class ProbHelper {
 		}
 
 		double result = (double) validHands/numComb;
-		String handstring = "";
+		/*String handstring = "";
 		for(int j = 0; j < hand.length; j++) {
 			handstring += " " + hand[j];
-		}
+		}*/
 		//Log.e("PROB_HELPER", "Found " + result + " prob for hand " + handstring + " and comb: " + comb);
 		for(int i = 1; i < numTimesToRoll; i++) {
 			

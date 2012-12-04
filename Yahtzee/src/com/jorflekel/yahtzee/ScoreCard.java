@@ -28,7 +28,7 @@ public class ScoreCard {
 
 		for (int i = 0; i < SECTIONS.length; i++) {
 			optimal.put(SECTIONS[i], OPTIMAL_SCORES[i]);
-//			 scores.put(SECTIONS[i], -1);
+			scores.put(SECTIONS[i], -1);
 		}
 	}
 
@@ -84,9 +84,9 @@ public class ScoreCard {
 	
 	public boolean isUpperSectionDone() {
 		boolean done = true;
-		for(int i = 0; i < UPPER_SECTION.length - 1; i++) {
+		for(int i = 0; i < UPPER_SECTION.length; i++) {
 			String section = UPPER_SECTION[i];
-			done = done && scores.containsKey(section);
+			done = done && (getScore(section) != -1);
 		}
 		return done;
 	}
@@ -94,7 +94,7 @@ public class ScoreCard {
 	public int getUpperScore() {
 		int sum = 0;
 		for (String s : UPPER_SECTION) {
-			if (scores.containsKey(s))
+			if (getScore(s) != -1)
 				sum += getScore(s);
 			else
 				Log.d("ScoreCard", "Does not contain value for key " + s);
@@ -105,7 +105,7 @@ public class ScoreCard {
 	public boolean isDone() {
 		boolean done = true;
 		for(String section : SECTIONS) {
-			done = done && scores.containsKey(section) || section.equals("bonus");
+			done = done && (getScore(section) != -1) || section.equals("bonus");
 		}
 		return done;
 	}
@@ -113,7 +113,7 @@ public class ScoreCard {
 	public int getTotalScore() {
 		int sum = 0;
 		for (String s : SECTIONS) {
-			if (scores.containsKey(s))
+			if (getScore(s) != -1)
 				sum += getScore(s);
 			else
 				Log.d("ScoreCard", "Does not contain value for key " + s);
