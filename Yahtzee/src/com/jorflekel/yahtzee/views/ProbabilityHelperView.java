@@ -9,8 +9,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.jorflekel.yahtzee.ProbHelper;
-import com.jorflekel.yahtzee.R;
 import com.jorflekel.yahtzee.views.HandPicker.OnHandChangedListener;
+import com.jorflekel.yahtzee.R;
 
 public class ProbabilityHelperView extends FrameLayout implements OnHandChangedListener{
 

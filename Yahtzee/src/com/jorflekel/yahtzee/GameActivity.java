@@ -6,6 +6,8 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
@@ -23,11 +25,12 @@ import android.widget.TextView;
 import com.jorflekel.yahtzee.Hands.Hand;
 import com.jorflekel.yahtzee.views.DiceHandView;
 import com.jorflekel.yahtzee.views.DieGLSurfaceView;
-import com.jorflekel.yahtzee.views.DiceHandView.HandChangeListener;
 import com.jorflekel.yahtzee.views.HelpDialog;
 import com.jorflekel.yahtzee.views.ProbabilityHelperView;
+import com.jorflekel.yahtzee.views.DiceHandView.HandChangeListener;
+import com.jorflekel.yahtzee.R;
 
-public class GameActivity extends Activity implements SensorEventListener, HandChangeListener {
+public class GameActivity extends Activity implements SensorEventListener, HandChangeListener, OnClickListener {
 
 	private List<TextView> scoreBoxes;
 	private TextView aces, twos, threes, fours, fives, sixes, bonus, threeOf,
@@ -255,10 +258,26 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 	}
 
 	public void onNewGameClick(View v) {
-		Intent intent = new Intent(this, GameActivity.class);
-		startActivity(intent);
-		finish();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Are you sure?").setPositiveButton("Yes", this)
+		    .setNegativeButton("No", this).show();
+		
 	}
+	@Override
+    public void onClick(DialogInterface dialog, int which) {
+        switch (which){
+        case DialogInterface.BUTTON_POSITIVE:
+        	Intent intent = new Intent(this, GameActivity.class);
+    		startActivity(intent);
+    		finish();
+            break;
+
+        case DialogInterface.BUTTON_NEGATIVE:
+            //No button clicked
+            break;
+        }
+    }
+	
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
