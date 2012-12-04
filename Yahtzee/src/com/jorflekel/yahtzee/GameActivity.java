@@ -156,6 +156,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 	}
 
 	public void startTurn() {
+		if(!probabilityHelperView.isOpen()) {
     	setRollsSinceMove(getRollsSinceMove() + 1);
     	roll();
     	rollsLabel.setText("" + (3-getRollsSinceMove()));
@@ -177,6 +178,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
     	    }
     	  }
     	}, 1000);
+		}
 	}
 
 	public void clearEmptyScores() {

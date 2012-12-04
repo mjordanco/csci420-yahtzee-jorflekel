@@ -158,6 +158,8 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 		}
 	};
 
-	
+	public boolean isOpen() {
+		return isOpen;
+	}
 	
 }
