@@ -109,6 +109,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 		dieRenderer = dieGLSurfaceView.renderer;
 		dieRenderer.diceHandView = diceHandView;
 		GLDice = dieGLSurfaceView.renderer.getDice();
+		dieGLSurfaceView.game=this;
 		
 		diceHandView.GLdice = dieRenderer.getDice();
 
@@ -122,7 +123,9 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 		sensors.registerListener(this,
 				sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 100);
 	}
-
+	public boolean getMoved() {
+		return moved;
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_game, menu);
@@ -132,20 +135,20 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 	private void roll() {
 		moved = false;
 		hand = diceHandView.roll();
-		probabilityHelperView.setRollsRemaining(3 - rollsSinceMove);
+		probabilityHelperView.setRollsRemaining(3 - getRollsSinceMove());
 	}
 
 	public void onShakeClick(View v) {
-		if (rollsSinceMove < 3 && !scoreCard.isDone()) {
+		if (getRollsSinceMove() < 3 && !scoreCard.isDone()) {
 			startTurn();
 			shakeTime = System.currentTimeMillis();
 		}
 	}
 
 	public void startTurn() {
-    	rollsSinceMove++;
+    	setRollsSinceMove(getRollsSinceMove() + 1);
     	roll();
-    	rollsLabel.setText("" + (3-rollsSinceMove));
+    	rollsLabel.setText("" + (3-getRollsSinceMove()));
     	MediaPlayer player = MediaPlayer.create(this, R.raw.roll);
     	player.start();
     	for(TextView tv : scoreBoxes) {
@@ -177,10 +180,10 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 	public void onScoreClick(View v) {
 		if (v.getId() == R.id.upperBonusScore)
 			return;
-		if (v.getTag(R.id.scoreId) == null && !moved && rollsSinceMove > 0) {
+		if (v.getTag(R.id.scoreId) == null && !moved && getRollsSinceMove() > 0) {
 			v.setTag(R.id.scoreId, ((Hand) v.getTag(R.id.handId)).score(hand));
 			((TextView) v).setTextColor(Color.parseColor("#254117"));
-			rollsSinceMove = 0;
+			setRollsSinceMove(0);
 			moved = true;
 			diceHandView.hideNumbers();
 			diceHandView.toggleOff();
@@ -289,7 +292,7 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 			float nYA = event.values[1];
 			if (Math.abs(nYA) > .3 && Math.abs(yA) > .3
 					&& Math.signum(nYA) == -Math.signum(yA)
-					&& rollsSinceMove < 3
+					&& getRollsSinceMove() < 3
 					& System.currentTimeMillis() - shakeTime > 2000) {
 				startTurn();
 				shakeTime = System.currentTimeMillis();
@@ -318,6 +321,12 @@ public class GameActivity extends Activity implements SensorEventListener, HandC
 	@Override
 	public void onHandChanged(int[] hand) {
 		probabilityHelperView.setHand(hand);
+	}
+	public int getRollsSinceMove() {
+		return rollsSinceMove;
+	}
+	public void setRollsSinceMove(int rollsSinceMove) {
+		this.rollsSinceMove = rollsSinceMove;
 	}
 
 }

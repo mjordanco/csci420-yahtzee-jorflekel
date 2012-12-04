@@ -21,6 +21,7 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.jorflekel.yahtzee.GameActivity;
 import com.jorflekel.yahtzee.R;
 
 

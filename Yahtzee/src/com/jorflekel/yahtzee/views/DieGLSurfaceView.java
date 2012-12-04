@@ -1,5 +1,6 @@
 package com.jorflekel.yahtzee.views;
 
+import com.jorflekel.yahtzee.GameActivity;
 import com.jorflekel.yahtzee.views.DieRenderer.DieState;
 
 import android.content.Context;
@@ -9,6 +10,8 @@ import android.view.MotionEvent;
 
 public class DieGLSurfaceView extends GLSurfaceView {
 	public DieRenderer renderer;
+
+	public GameActivity game;
 	
 	public DieGLSurfaceView(Context context) {
 		super(context);
@@ -32,6 +35,7 @@ public class DieGLSurfaceView extends GLSurfaceView {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent e){
+		if(!(!game.getMoved() && game.getRollsSinceMove() > 0)) return false;
 		float xSize = renderer.boundary * renderer.ratio;
 		float ySize = renderer.boundary;
 		float x = -1 * xSize + 2 * xSize * e.getX() / getWidth();
