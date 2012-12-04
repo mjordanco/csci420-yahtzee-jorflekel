@@ -6,13 +6,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 
 import com.jorflekel.yahtzee.ProbHelper;
 import com.jorflekel.yahtzee.views.HandPicker.OnHandChangedListener;
 import com.jorflekel.yahtzee.R;
 
-public class ProbabilityHelperView extends FrameLayout implements OnHandChangedListener{
+public class ProbabilityHelperView extends FrameLayout implements OnHandChangedListener, OnDrawerOpenListener, OnDrawerCloseListener{
 
 	private final int[] ids = new int[] {
 			R.id.threeOfAKindProb,
@@ -28,6 +30,7 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 	private ProbHelper probHelper;
 	private TextView rollsRemainingText;
 	private int rollsRemaining;
+	private boolean isOpen;
 
 	private TextView maxScore;
 	
@@ -45,30 +48,41 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 		rollsRemainingText.setOnClickListener(onRollsClick);
 		probHelper = ProbHelper.instance();
 		setRollsRemaining(3);
-		
+		isOpen=false;
 		maxScore = (TextView) findViewById(R.id.maxScore);
 	}
 	
 	public void setHand(int[] hand) {
-		handPicker.setHand(hand);
+		handPicker.setHand(hand.clone());
 	}
 	
 	public void setHeld(boolean[] held) {
 		handPicker.setHeld(held);
-		Log.d("ProbabilityHelperView", "Set held");
+		//Log.d("ProbabilityHelperView", "Set held");
 	}
 
 	@Override
 	public void onHandChanged(int[] hand) {
-		updateProbs();
+		//if(isOpen) 
+			updateProbs();
 	}
 
 	@Override
 	public void onHeldChanged(boolean[] held) {
-		updateProbs();
-		Log.d("ProbabilityHelper", "Held Changed");
+		//if(isOpen) 
+			updateProbs();
+		//Log.d("ProbabilityHelper", "Held Changed");
 	}
-	
+	@Override
+	public void onDrawerOpened() {
+		updateProbs();
+		isOpen=true;
+	}
+	@Override
+	public void onDrawerClosed() {
+		isOpen=false;
+		
+	}
 	public void updateProbs() {
 		int[] hand = handPicker.getHand();
 		boolean[] held = handPicker.getHeld();
@@ -142,5 +156,7 @@ public class ProbabilityHelperView extends FrameLayout implements OnHandChangedL
 			setRollsRemaining(rollsRemaining > 1 ? rollsRemaining - 1 : 3);
 		}
 	};
+
+	
 	
 }
