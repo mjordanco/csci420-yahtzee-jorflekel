@@ -97,7 +97,7 @@ public class ScoreCard {
 			if (getScore(s) != -1)
 				sum += getScore(s);
 			else
-				Log.d("ScoreCard", "Does not contain value for key " + s);
+				Log.d("ScoreCard", "Does not contain score for key " + s);
 		}
 		return sum;
 	}
@@ -116,7 +116,7 @@ public class ScoreCard {
 			if (getScore(s) != -1)
 				sum += getScore(s);
 			else
-				Log.d("ScoreCard", "Does not contain value for key " + s);
+				Log.d("ScoreCard", "Does not contain score for key " + s);
 		}
 		return sum;
 	}

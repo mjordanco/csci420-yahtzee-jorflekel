@@ -11,7 +11,7 @@ public class ProbHelper {
 	public static int HOUSE = 22333;
 	
 	private static ProbHelper singleton = null;
-	private int[][] oneComb, twoComb, threeComb, fourComb, fiveComb;
+	private int[][] oneComb, twoComb, threeComb, fourComb, fiveComb, results, diceSet;
 	
 	public static ProbHelper instance() {
 		System.out.println("Instancing...");
@@ -59,38 +59,75 @@ public class ProbHelper {
 				}
 			}	
 		}
-		
+		//since this is yahtzee, results can always be int[7776][5]
+		results = new int[7776][5];
 	}
 	
-	public double probOfDoubleJackStyle( int[] hand, int numDiceToRoll, int numTimesToRoll) {
-		
-		int numUnique = 0;
-		if(hand != null) {
-			Arrays.sort(hand);
-			numUnique = 1;
-			int current = hand[0];
-			for(int i : hand) {
-				if(current != i) {
-					numUnique++;
-					current = i;
-				}
-			}
-		} else hand = new int[0];
-		
-		if(numUnique < hand.length || numDiceToRoll > 6) return 1;
-		else if((numDiceToRoll + hand.length) < 2) return 0;
-		
-		double probNoMatchHand = Math.pow((6.0-(double)numUnique)/(6.0), numDiceToRoll);
-		double probNoMatchRolled = 1;
-		for(double i = 1; i < numDiceToRoll; i++) {
-			probNoMatchRolled = probNoMatchRolled * (6.0-i)/6.0;
-		}
-		
-		double result = 1.0 - probNoMatchHand * probNoMatchRolled;
+	public double[] probOfAllComb(int[] hand, int numDiceToRoll, int numTimesToRoll) {
+		if(hand == null) 
+			hand = new int[0];
 
+		double numComb = Math.pow(6,numDiceToRoll);
+		int totDice = hand.length + numDiceToRoll;
+		
+		//int[][] diceSet;
+		switch(numDiceToRoll) {
+		case 1: diceSet = oneComb;break;
+		case 2: diceSet = twoComb;break;
+		case 3: diceSet = threeComb;break;
+		case 4: diceSet = fourComb;break;
+		case 5: diceSet = fiveComb;break;
+		default: diceSet = new int[0][0];break;
+		}
+		/*valid hands indecies: 0-trip
+								1-quad
+								2-full house
+								3-small straight
+								4-large straight
+								5-yahtzee
+		*/
+		int[] validHands = {0,0,0,0,0,0};
+		//int[][] results = new int[(int)numComb][totDice];
+		
+		for(int i = 0; i < numComb; i++) {
+			for(int j = 0; j < numDiceToRoll; j++) {
+				results[i][j] = diceSet[i][j];
+			}
+			for(int j = 0; j < hand.length; j++) {
+				results[i][totDice-j-1] = hand[j];
+			}
+			if(containsComb(3, results[i])) {
+				validHands[0]++;
+			}
+			if(containsComb(4, results[i])) {
+				validHands[1]++;
+			}
+			if(containsComb(HOUSE, results[i])) {
+				validHands[2]++;
+			}
+			if(containsComb(SM_STRAIGHT, results[i])) {
+				validHands[3]++;
+			}
+			if(containsComb(LG_STRAIGHT, results[i])) {
+				validHands[4]++;
+			}
+			if(containsComb(5, results[i])) {
+				validHands[5]++;
+			}
+		}
+		double[] result = new double[6];
+		for(int i = 0; i < validHands.length; i++){
+			result[i] = (double) validHands[i]/numComb;
+		}
+		/*String handstring = "";
+		for(int j = 0; j < hand.length; j++) {
+			handstring += " " + hand[j];
+		}*/
+		//Log.e("PROB_HELPER", "Found " + result + " prob for hand " + handstring + " and comb: " + comb);
 		for(int i = 1; i < numTimesToRoll; i++) {
-			
-			result = result + (1.0 - result) * result;
+			for(int j = 0; j < result.length; j++){
+				result[j] = result[j] + (1.0 - result[j]) * result[j];
+			}
 		}
 		
 		return result;
@@ -106,7 +143,7 @@ public class ProbHelper {
 		double numComb = Math.pow(6,numDiceToRoll);
 		int totDice = hand.length + numDiceToRoll;
 		
-		int[][] diceSet;
+		//int[][] diceSet;
 		switch(numDiceToRoll) {
 		case 1: diceSet = oneComb;break;
 		case 2: diceSet = twoComb;break;
@@ -120,7 +157,7 @@ public class ProbHelper {
 			return -1;
 		}
 		int validHands = 0;
-		int[][] results = new int[(int)numComb][totDice];
+		//int[][] results = new int[(int)numComb][totDice];
 		
 		for(int i = 0; i < numComb; i++) {
 			for(int j = 0; j < numDiceToRoll; j++) {
@@ -207,5 +244,38 @@ public class ProbHelper {
 		return result;
 	}
 
+	public double probOfDoubleJackStyle( int[] hand, int numDiceToRoll, int numTimesToRoll) {
+		
+		int numUnique = 0;
+		if(hand != null) {
+			Arrays.sort(hand);
+			numUnique = 1;
+			int current = hand[0];
+			for(int i : hand) {
+				if(current != i) {
+					numUnique++;
+					current = i;
+				}
+			}
+		} else hand = new int[0];
+		
+		if(numUnique < hand.length || numDiceToRoll > 6) return 1;
+		else if((numDiceToRoll + hand.length) < 2) return 0;
+		
+		double probNoMatchHand = Math.pow((6.0-(double)numUnique)/(6.0), numDiceToRoll);
+		double probNoMatchRolled = 1;
+		for(double i = 1; i < numDiceToRoll; i++) {
+			probNoMatchRolled = probNoMatchRolled * (6.0-i)/6.0;
+		}
+		
+		double result = 1.0 - probNoMatchHand * probNoMatchRolled;
+
+		for(int i = 1; i < numTimesToRoll; i++) {
+			
+			result = result + (1.0 - result) * result;
+		}
+		
+		return result;
+	}
 }
 
